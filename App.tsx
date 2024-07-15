@@ -1,21 +1,20 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import 'react-native-gesture-handler';
+import React, { useCallback } from 'react'
+import { NavigationContainer } from '@react-navigation/native';
+import { MyStack } from './routes/homeStack';
+// import { useFonts } from 'expo-font';
+// import * as SplashScreen from 'expo-splash-screen'
+// import { AuthProvider } from './AuthContext';
+// import { MenuProvider } from 'react-native-popup-menu';
+// import { LocationProvider } from './LocationContext';
 
 export default function App() {
   
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <MyStack />
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+

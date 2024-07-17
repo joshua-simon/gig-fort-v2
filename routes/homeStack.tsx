@@ -12,7 +12,7 @@ import Login from "../screens/Login";
 import EditDetails from "../screens/EditDetails";
 import Header from "../components/Header";
 import HeaderProfile from "../components/HeaderProfile";
-// import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import About from "../screens/About";
 // import { AuthContext } from "../AuthContext";
 
@@ -63,7 +63,7 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>()
 
 // export type listProps = NativeStackScreenProps<RootStackParamList, 'List', 'MyStack'>
-// export type mapProps = NativeStackScreenProps<RootStackParamList, 'Map', 'MyStack'>
+export type mapProps = NativeStackScreenProps<RootStackParamList, 'Map', 'MyStack'>
 // export type gigDetailsProps = NativeStackScreenProps<RootStackParamList, 'GigDetails', 'MyStack'>
 // export type registerProps = NativeStackScreenProps<RootStackParamList, 'Register', 'MyStack'>
 // export type registrationSuccessProps = NativeStackScreenProps<RootStackParamList, 'RegistrationSuccess', 'MyStack'>

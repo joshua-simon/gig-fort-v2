@@ -24,7 +24,7 @@ import { AuthContext } from "../AuthContext";
 import { useGetUser } from "../hooks/useGetUser";
 import { useLocation } from "../LocationContext";
 import { useFocusEffect } from '@react-navigation/native';
-import CustomCallout from "./CustomCallout";
+// import CustomCallout from "./CustomCallout";
 
 const GigMap = () => {
 

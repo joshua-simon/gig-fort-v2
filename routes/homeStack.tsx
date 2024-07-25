@@ -62,7 +62,7 @@ export type RootStackParamList = {
 
 const Stack = createStackNavigator<RootStackParamList>()
 
-// export type listProps = NativeStackScreenProps<RootStackParamList, 'List', 'MyStack'>
+export type listProps = NativeStackScreenProps<RootStackParamList, 'List', 'MyStack'>
 export type mapProps = NativeStackScreenProps<RootStackParamList, 'Map', 'MyStack'>
 // export type gigDetailsProps = NativeStackScreenProps<RootStackParamList, 'GigDetails', 'MyStack'>
 // export type registerProps = NativeStackScreenProps<RootStackParamList, 'Register', 'MyStack'>
@@ -78,7 +78,7 @@ export const MyStack = () => {
 
   return (
     <Stack.Navigator
-        initialRouteName="Map"
+        initialRouteName="List"
     >
       <Stack.Screen 
       name="Map" 

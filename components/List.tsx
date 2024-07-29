@@ -19,6 +19,8 @@ interface Props {
 }
 
 const ListByDay: FC<Props> = ({ navigation }): JSX.Element => {
+
+  
   const [showWeek, setShowByWeek] = useState<boolean>(false);
   const [ gigs, setGigs ] = useState<GigObject[]>([])
   const currentDateMs: number = Date.now();
@@ -29,6 +31,7 @@ const ListByDay: FC<Props> = ({ navigation }): JSX.Element => {
 //   const locationToUse = user && userDetails?.userLocation ? userDetails.userLocation : selectedLocation;
 
   const gigsDataFromHook = useGigs();
+
 
   useEffect(() => {
     if (gigsDataFromHook) {

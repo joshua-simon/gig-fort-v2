@@ -12,7 +12,7 @@ import {
     removeLikedGigIDfromUser
 } from "./databaseFunctions";
 
-export const useGigData = (gigId:string | null,userId:string) => {
+export const useGigData = (gigId:string, userId:string) => {
 
 
     const [isGigSaved, setIsGigSaved] = useState(false);

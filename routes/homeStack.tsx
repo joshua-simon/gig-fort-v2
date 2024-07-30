@@ -68,7 +68,7 @@ export type mapProps = NativeStackScreenProps<RootStackParamList, 'Map', 'MyStac
 // export type registerProps = NativeStackScreenProps<RootStackParamList, 'Register', 'MyStack'>
 // export type registrationSuccessProps = NativeStackScreenProps<RootStackParamList, 'RegistrationSuccess', 'MyStack'>
 // export type profileProps = NativeStackScreenProps<RootStackParamList, 'Profile', 'MyStack'>
-// export type loginProps = NativeStackScreenProps<RootStackParamList, 'Login', 'MyStack'>
+export type loginProps = NativeStackScreenProps<RootStackParamList, 'Login', 'MyStack'>
 // export type editDetailsProps = NativeStackScreenProps<RootStackParamList, 'EditDetails', 'MyStack'>
 
 

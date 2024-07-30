@@ -38,16 +38,16 @@ const GigCard:FC<Props> = ({ item, isProfile, navigation }) => {
   const dayOfMonth = getDate(dateObject);
   const monthName = format(new Date(gigDate), 'LLL');
 
-//   const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
-//   const {
-//     isGigSaved,
-//     toggleSaveGig,
-//     likes,
-//     toggleLiked,
-//     isGigLiked,
-//     isPopupVisible
-//   } = useGigData(item?.id, user?.uid);
+  const {
+    isGigSaved,
+    toggleSaveGig,
+    likes,
+    toggleLiked,
+    isGigLiked,
+    isPopupVisible
+  } = useGigData(item?.id, user?.uid);
 
 
   return (
@@ -55,14 +55,14 @@ const GigCard:FC<Props> = ({ item, isProfile, navigation }) => {
     item = {item} 
     dayOfMonth={dayOfMonth} 
     monthName={monthName} 
-    // toggleSaveGig={toggleSaveGig} 
-    // isGigSaved={isGigSaved}
+    toggleSaveGig={toggleSaveGig} 
+    isGigSaved={isGigSaved}
     navigation = {navigation}
     isProfile = {isProfile}
-    // user = {user}
-    // likes = {likes}
-    // isGigLiked = {isGigLiked}
-    // toggleLiked = {toggleLiked}
+    user = {user}
+    likes = {likes}
+    isGigLiked = {isGigLiked}
+    toggleLiked = {toggleLiked}
     />
   )
 };

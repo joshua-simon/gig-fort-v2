@@ -1,21 +1,35 @@
+import { FC } from 'react';
 import {View,Text,TouchableOpacity,StyleSheet,Image } from 'react-native'
 import { Ionicons, FontAwesome, AntDesign } from "@expo/vector-icons";
 import ButtonBar from './ButtonBar';
+import { GigObject } from '../routes/homeStack';
 
+interface GigCardContentProps {
+  item: GigObject;
+  dayOfMonth: number;
+  monthName: string;
+  navigation?: any;
+  isProfile?: boolean;
+  user:any;
+  toggleSaveGig:any;
+  isGigSaved:any;
+  likes:any;
+  isGigLiked: any;
+  toggleLiked: any;
+}
 
-
-const GigCardContent = ({ 
+const GigCardContent:FC<GigCardContentProps> = ({ 
   item,
   dayOfMonth,
   monthName,
-//   toggleSaveGig,
-//   isGigSaved,
+  toggleSaveGig,
+  isGigSaved,
   navigation,
   isProfile,
-//   user,
-//   likes,
-//   isGigLiked,
-//   toggleLiked,
+  user,
+  likes,
+  isGigLiked,
+  toggleLiked,
 }) => {
 
   const gigTitle =
@@ -77,11 +91,11 @@ const GigCardContent = ({
         </TouchableOpacity>
       </View>
       <View style={styles.recommendations}>
-        {/* <Text style={styles.recommendations_text}>{`  ${likes} ${
+        <Text style={styles.recommendations_text}>{`  ${likes} ${
           likes == 1 ? "person has" : "people have"
-        } liked this gig`}</Text> */}
+        } liked this gig`}</Text>
       </View>
-    {/* {user ? (
+    {user ? (
             <View style={styles.saveAndNotificationButtons}>
             <View style={styles.saveAndNotificationButtons_button}>
               <TouchableOpacity onPress={() => toggleLiked(item?.id)}>
@@ -112,7 +126,7 @@ const GigCardContent = ({
           </View>
     ) : (
       <ButtonBar/>
-    )} */}
+    )}
 
     </View>
   ) : (
@@ -136,13 +150,13 @@ const GigCardContent = ({
 
     </View>
     <Text style={styles.seeMore}>See more {`>`}</Text>
-    <TouchableOpacity onPress={() => toggleSaveGig(item?.id)}>
+    {/* <TouchableOpacity onPress={() => toggleSaveGig(item?.id)}>
       {isGigSaved ? (
         <FontAwesome name="bookmark" size={24} color="#377D8A" />
       ) : (
         <FontAwesome name="bookmark-o" size={24} color="#377D8A" />
       )}
-    </TouchableOpacity>
+    </TouchableOpacity> */}
   </View>
   )
 
@@ -211,7 +225,7 @@ const styles = StyleSheet.create({
   blurbText: {
     flex: 1,
     fontFamily: "LatoRegular",
-    size: 10,
+    // size: 10,
     lineHeight: 14.2,
   },
 

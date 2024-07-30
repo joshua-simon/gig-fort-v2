@@ -28,6 +28,7 @@ const ListByDay: FC<Props> = ({ navigation }): JSX.Element => {
   const {user} = useContext(AuthContext) || {}
   const userDetails = useGetUser(user?.uid);
 
+
 //   const locationToUse = user && userDetails?.userLocation ? userDetails.userLocation : selectedLocation;
 
   const gigsDataFromHook = useGigs();
@@ -51,14 +52,14 @@ const ListByDay: FC<Props> = ({ navigation }): JSX.Element => {
   const gigsThisWeek = getGigsThisWeek(gigs, currentDateMs);
 
   const formattedDay = format(new Date(currentDateMs),'EEEE')
-  const formattedWeek = format(new Date(currentDateMs),'LLLL do Y')
+  const formattedWeek = format(new Date(currentDateMs),'LLLL do y')
 
 
   const gigsToRender = showWeek ? (
     Object.keys(gigsThisWeek).length === 0 ? (
       <Text style = {{fontFamily: 'LatoRegular', marginLeft:'7%'}}>No gigs this week</Text>
     ) : (
-      <GigsByWeek gigsThisWeek_grouped={gigsThisWeek} navigation={navigation} />
+      <GigsByWeek gigsThisWeek_grouped={gigsThisWeek} navigation={navigation} /> 
     )
 
   ) : (

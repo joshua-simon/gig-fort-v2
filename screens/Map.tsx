@@ -4,13 +4,38 @@ import GigMap from '../components/Map'
 import { mapProps } from '../routes/homeStack'
 import Footer from '../components/Footer'
 
-const Map = () => {
+
+type MapScreenNavgationProp = mapProps['navigation']
+
+interface Props {
+    navigation: MapScreenNavgationProp
+}
+
+const Map:FC<Props> = ({ navigation }):JSX.Element => {
+
     return (
-        <View>
-            <GigMap/>
-            <Footer/>
+        <View style = {styles.container}>
+            <GigMap navigation = {navigation}/>
+            <Footer navigation = {navigation}/>
         </View>
     )
 }
 
-export default Map
+const styles = StyleSheet.create({
+    container: {
+        flex:1,
+    },
+    button: {
+        backgroundColor: '#68912b',
+        padding:5,
+        borderRadius:5
+    },
+    buttonText: {
+        color:'white',
+        fontFamily:'Helvetica-Neue'
+    }
+})
+
+
+ 
+export default Map;

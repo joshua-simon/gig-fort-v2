@@ -150,13 +150,13 @@ const GigCardContent:FC<GigCardContentProps> = ({
 
     </View>
     <Text style={styles.seeMore}>See more {`>`}</Text>
-    {/* <TouchableOpacity onPress={() => toggleSaveGig(item?.id)}>
+    <TouchableOpacity onPress={() => toggleSaveGig(item?.id)}>
       {isGigSaved ? (
         <FontAwesome name="bookmark" size={24} color="#377D8A" />
       ) : (
         <FontAwesome name="bookmark-o" size={24} color="#377D8A" />
       )}
-    </TouchableOpacity> */}
+    </TouchableOpacity>
   </View>
   )
 

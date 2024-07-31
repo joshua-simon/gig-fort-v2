@@ -52,7 +52,7 @@ const Header: FC = (): JSX.Element => {
   const content = user ? (
     <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
       <View style={styles.profile}>
-        <Ionicons name="ios-person-outline" size={24} color="white" />
+        <Ionicons name="person-outline" size={24} color="white" />
         <Text style={styles.firstName}>{userFirstName}</Text>
       </View>
     </TouchableOpacity>
@@ -60,9 +60,9 @@ const Header: FC = (): JSX.Element => {
 
     <View style = {styles.headerContainer}>
       <View>
-        <TouchableOpacity style = {styles.selectLocation} onPress = {toggleModal}>
+        {/* <TouchableOpacity style = {styles.selectLocation} onPress = {toggleModal}>
           <Text style = {styles.selectLocation_text}>Select location</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity

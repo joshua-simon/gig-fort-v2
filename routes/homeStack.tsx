@@ -14,7 +14,7 @@ import Header from "../components/Header";
 import HeaderProfile from "../components/HeaderProfile";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import About from "../screens/About";
-// import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../AuthContext";
 
 
 export interface Time {
@@ -64,17 +64,17 @@ const Stack = createStackNavigator<RootStackParamList>()
 
 export type listProps = NativeStackScreenProps<RootStackParamList, 'List', 'MyStack'>
 export type mapProps = NativeStackScreenProps<RootStackParamList, 'Map', 'MyStack'>
-// export type gigDetailsProps = NativeStackScreenProps<RootStackParamList, 'GigDetails', 'MyStack'>
+export type gigDetailsProps = NativeStackScreenProps<RootStackParamList, 'GigDetails', 'MyStack'>
 // export type registerProps = NativeStackScreenProps<RootStackParamList, 'Register', 'MyStack'>
 // export type registrationSuccessProps = NativeStackScreenProps<RootStackParamList, 'RegistrationSuccess', 'MyStack'>
-// export type profileProps = NativeStackScreenProps<RootStackParamList, 'Profile', 'MyStack'>
+export type profileProps = NativeStackScreenProps<RootStackParamList, 'Profile', 'MyStack'>
 export type loginProps = NativeStackScreenProps<RootStackParamList, 'Login', 'MyStack'>
 // export type editDetailsProps = NativeStackScreenProps<RootStackParamList, 'EditDetails', 'MyStack'>
 
 
 export const MyStack = () => {
 
-//   const { user } = useContext(AuthContext)
+  const { user } = useContext(AuthContext)
 
   return (
     <Stack.Navigator
@@ -88,7 +88,8 @@ export const MyStack = () => {
         headerTitle: () => <Header/>,
         headerStyle:{
           backgroundColor:'#2596be'
-        }
+        },
+        headerLeft: () => null
     }}     
       />
       <Stack.Screen 
@@ -154,8 +155,8 @@ export const MyStack = () => {
       headerLeft: () => {return null}
   }}
       />
-  {/* {user ? 
-  ( */}
+    {user ? (
+  
           <Stack.Screen 
           name="Profile" 
           component={Profile} 
@@ -168,7 +169,7 @@ export const MyStack = () => {
             }
         }}
         />
-   {/* ): null} */}
+   ): null} 
     <Stack.Screen 
     name="Login" 
     component={Login} 

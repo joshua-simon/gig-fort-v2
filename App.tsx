@@ -5,7 +5,7 @@ import { MyStack } from './routes/homeStack';
 import { useFonts } from 'expo-font';
 // import * as SplashScreen from 'expo-splash-screen'
 import { AuthProvider } from './AuthContext';
-// import { MenuProvider } from 'react-native-popup-menu';
+import { MenuProvider } from 'react-native-popup-menu';
 // import { LocationProvider } from './LocationContext';
 
 export default function App() {
@@ -26,11 +26,13 @@ export default function App() {
   // }
   
   return (
-    <AuthProvider>
-      <NavigationContainer>
-        <MyStack />
-      </NavigationContainer>
-    </AuthProvider>
+    <MenuProvider>
+      <AuthProvider>
+        <NavigationContainer>
+          <MyStack />
+        </NavigationContainer>
+      </AuthProvider>
+    </MenuProvider>
   );
 }
 

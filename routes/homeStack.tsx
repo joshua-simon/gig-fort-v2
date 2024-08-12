@@ -85,10 +85,11 @@ export const MyStack = () => {
       component={Map} 
       options={{
         title:'',
-        headerTitle: () => <Header/>,
-        headerStyle:{
-          backgroundColor:'#2596be'
-        },
+        headerShown: false,
+        // headerTitle: () => <Header/>,
+        // headerStyle:{
+        //   backgroundColor:'#2596be'
+        // },
         headerLeft: () => null
     }}     
       />

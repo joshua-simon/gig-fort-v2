@@ -24,6 +24,7 @@ import { AuthContext } from "../AuthContext";
 import { useGetUser } from "../hooks/useGetUser";
 import { useLocation } from "../LocationContext";
 import { useFocusEffect } from '@react-navigation/native';
+import { SafeAreaView } from "react-native-safe-area-context";
 // import CustomCallout from "./CustomCallout";
 
 
@@ -246,33 +247,15 @@ const renderMarker = (data) => {
     longitudeDelta: 0.03,
   }
 
-  const aucklandRegion = {
-    latitude: -36.848461,
-    longitude: 174.763336,
-    latitudeDelta: 0.04,
-    longitudeDelta: 0.04,
-  }
 
   const [mapRegion, setMapRegion] = useState(wellingtonRegion);
-
-//   useEffect(() => {
-//     let newMapRegion;
-
-//     if (userDetails?.userLocation) {
-//         newMapRegion = userDetails.userLocation == 'Wellington' ? wellingtonRegion : aucklandRegion;
-//     } else if (selectedLocation) {
-//         newMapRegion = selectedLocation == 'Wellington' ? wellingtonRegion : aucklandRegion;
-//     }
-
-//     setMapRegion(newMapRegion);
-
-// }, [selectedLocation, userDetails]);
 
 
   return (
     <View style={styles.container}>
+      <StatusBar translucent backgroundColor="transparent" />
       <View style = {styles.mapElements}>
-        <Carousel setSelectedDate = {setSelectedDate} selectedDate = {selectedDate}/>
+        {/* <Carousel setSelectedDate = {setSelectedDate} selectedDate = {selectedDate}/> */}
       </View>
       <View style={styles.mapContainer}>
       <ClusteredMapView
@@ -287,6 +270,8 @@ const renderMarker = (data) => {
           {userMarker}
         </ClusteredMapView>
       </View>
+      <View style={styles.overlay}>
+      </View>
     </View>
   );
 };
@@ -299,6 +284,20 @@ const mapHeight = mapWidth /0.91 //this set height  based on the figma map aspec
 const styles = StyleSheet.create({
   container: {
     flex:1,
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 150, 
+    zIndex: 1000,
+    backgroundColor:'rgba(127, 154, 166, 0.5)'
+  },
+  overlayText: {
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
   },
   map: {
     height: '100%',

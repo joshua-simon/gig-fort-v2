@@ -34,9 +34,9 @@ const Footer = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={() => toggleState('Map')}>
           {selectedButton === 'Map' ? (
-            <Ionicons name="md-map" size={24} color="#377D8A" />
+            <Ionicons name="map" size={24} color="#377D8A" />
           ) : (
-            <Ionicons name="md-map-outline" size={24} color="black" />
+            <Ionicons name="map-outline" size={24} color="black" />
           )}
         </TouchableOpacity>
         <Text style={styles.buttonLabel}>Map</Text>

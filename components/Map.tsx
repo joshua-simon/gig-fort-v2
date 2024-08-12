@@ -22,9 +22,8 @@ import ClusteredMapView from 'react-native-maps-super-cluster';
 import { Entypo } from '@expo/vector-icons';
 import { AuthContext } from "../AuthContext";
 import { useGetUser } from "../hooks/useGetUser";
-import { useLocation } from "../LocationContext";
 import { useFocusEffect } from '@react-navigation/native';
-import { SafeAreaView } from "react-native-safe-area-context";
+import Feather from '@expo/vector-icons/Feather';
 // import CustomCallout from "./CustomCallout";
 
 
@@ -271,6 +270,13 @@ const renderMarker = (data) => {
         </ClusteredMapView>
       </View>
       <View style={styles.overlay}>
+        <View style = {styles.overlay_header}>
+            <Image
+              source = {require("../assets/Icon_White_48x48.png")}
+              style = {{width:30,height:30}}
+            />
+            <Feather name="menu" size={24} color="white" />
+        </View>
       </View>
     </View>
   );
@@ -293,6 +299,12 @@ const styles = StyleSheet.create({
     height: 150, 
     zIndex: 1000,
     backgroundColor:'rgba(127, 154, 166, 0.5)'
+  },
+  overlay_header: {
+    height:'40%',
+    flexDirection:'row',
+    justifyContent: 'space-between',
+    paddingTop:'10%'
   },
   overlayText: {
     color: 'white',

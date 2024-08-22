@@ -17,13 +17,13 @@ import { format,isSameDay } from "date-fns";
 import { mapProps } from "../routes/homeStack";
 import { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from 'expo-location';
-import Carousel from "./Carousel";
 import ClusteredMapView from 'react-native-maps-super-cluster';
 import { Entypo } from '@expo/vector-icons';
 import { AuthContext } from "../AuthContext";
 import { useGetUser } from "../hooks/useGetUser";
 import { useFocusEffect } from '@react-navigation/native';
 import Feather from '@expo/vector-icons/Feather';
+import { buttonFilled,buttonFilled_text } from "../styles";
 // import CustomCallout from "./CustomCallout";
 
 
@@ -254,7 +254,6 @@ const renderMarker = (data) => {
     <View style={styles.container}>
       <StatusBar translucent backgroundColor="transparent" />
       <View style = {styles.mapElements}>
-        {/* <Carousel setSelectedDate = {setSelectedDate} selectedDate = {selectedDate}/> */}
       </View>
       <View style={styles.mapContainer}>
       <ClusteredMapView
@@ -272,10 +271,26 @@ const renderMarker = (data) => {
       <View style={styles.overlay}>
         <View style = {styles.overlay_header}>
             <Image
-              source = {require("../assets/Icon_White_48x48.png")}
-              style = {{width:30,height:30}}
+              source = {require("../assets/Icon_White_48x48_new.png")}
+              style = {{width:12,height:28}}
             />
-            <Feather name="menu" size={24} color="white" />
+            <Feather name="menu" size={24} color="white" style = {{paddingTop:"5%"}}/>
+        </View>
+        <View style ={styles.overlay_buttons}>
+          <TouchableOpacity style = {styles.overlay_button}>
+            <Text style = {buttonFilled_text}>Today, 22nd August</Text>
+          </TouchableOpacity>
+          <View style ={styles.overlay_buttons_filters}>
+            <TouchableOpacity style ={styles.overlay_buttons_filters_button}>
+              <Text style = {buttonFilled_text}>Near me</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style ={styles.overlay_buttons_filters_button}>
+              <Text style = {buttonFilled_text}>Starting soon</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style ={styles.overlay_buttons_filters_button}>
+              <Text style = {buttonFilled_text}>Custom filters</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
@@ -296,20 +311,48 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 150, 
+    height: 220, 
     zIndex: 1000,
     backgroundColor:'rgba(127, 154, 166, 0.5)'
   },
   overlay_header: {
-    height:'40%',
+    height:'45%',
     flexDirection:'row',
     justifyContent: 'space-between',
-    paddingTop:'10%'
+    alignItems:'center',
+    paddingHorizontal: 15
   },
-  overlayText: {
-    color: 'white',
-    fontSize: 18,
-    textAlign: 'center',
+  overlay_buttons:{
+    marginTop: "-5%",
+    position: 'absolute',
+    top: 80, // Position it right below the header
+    left: 0,
+    right: 0,
+    paddingTop: 10
+  },
+  overlay_button: {
+    backgroundColor:'#377D8A',
+    padding: 10,
+    borderRadius: 4,
+    alignItems: 'center',
+    marginBottom: 10,
+    width:"70%",
+    marginTop:15,
+    alignSelf:"center"
+  },
+  overlay_buttons_filters: {
+    flexDirection: "row",
+    justifyContent: "space-evenly"
+  },
+  overlay_buttons_filters_button:{
+    backgroundColor:'#377D8A',
+    padding: 10,
+    borderRadius: 4,
+    alignItems: 'center',
+    marginBottom: 10,
+    width:"auto",
+    marginTop:15,
+    alignSelf:"center"
   },
   map: {
     height: '100%',

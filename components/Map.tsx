@@ -23,6 +23,7 @@ import { AuthContext } from "../AuthContext";
 import { useGetUser } from "../hooks/useGetUser";
 import { useFocusEffect } from '@react-navigation/native';
 import Feather from '@expo/vector-icons/Feather';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { buttonFilled,buttonFilled_text } from "../styles";
 // import CustomCallout from "./CustomCallout";
 
@@ -278,17 +279,26 @@ const renderMarker = (data) => {
         </View>
         <View style ={styles.overlay_buttons}>
           <TouchableOpacity style = {styles.overlay_button}>
-            <Text style = {buttonFilled_text}>Today, 22nd August</Text>
+              <Text style = {buttonFilled_text}>Today, 22nd August</Text>
           </TouchableOpacity>
           <View style ={styles.overlay_buttons_filters}>
             <TouchableOpacity style ={styles.overlay_buttons_filters_button}>
-              <Text style = {buttonFilled_text}>Near me</Text>
+              <View style ={styles.overlay_buttons_filters_button_details}>
+                <Feather name="map-pin" size={12} color="white" />
+                <Text style = {styles.overlay_buttons_filters_button_text}> Near me</Text>
+              </View>
             </TouchableOpacity>
             <TouchableOpacity style ={styles.overlay_buttons_filters_button}>
-              <Text style = {buttonFilled_text}>Starting soon</Text>
+              <View style ={styles.overlay_buttons_filters_button_details}>
+                <AntDesign name="clockcircleo" size={12} color="white" />
+                <Text style = {styles.overlay_buttons_filters_button_text}> Starting soon</Text>
+              </View>
             </TouchableOpacity>
             <TouchableOpacity style ={styles.overlay_buttons_filters_button}>
-              <Text style = {buttonFilled_text}>Custom filters</Text>
+              <View style ={styles.overlay_buttons_filters_button_details}>
+                <Feather name="sliders" size={12} color="white" />
+                <Text style = {styles.overlay_buttons_filters_button_text}> Custom filters</Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -331,28 +341,55 @@ const styles = StyleSheet.create({
     paddingTop: 10
   },
   overlay_button: {
-    backgroundColor:'#377D8A',
+    backgroundColor:'#0088AD',
     padding: 10,
     borderRadius: 4,
     alignItems: 'center',
     marginBottom: 10,
     width:"70%",
     marginTop:15,
-    alignSelf:"center"
+    alignSelf:"center",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
   overlay_buttons_filters: {
     flexDirection: "row",
     justifyContent: "space-evenly"
   },
   overlay_buttons_filters_button:{
-    backgroundColor:'#377D8A',
-    padding: 10,
+    backgroundColor:'#0088AD',
+    // borderWidth: 1,
+    // borderColor: 'white',
+    padding: 5,
     borderRadius: 4,
     alignItems: 'center',
     marginBottom: 10,
     width:"auto",
     marginTop:15,
     alignSelf:"center"
+  },
+  overlay_buttons_filters_button_details: {
+    flexDirection: 'row',
+    alignItems: "center"
+  },
+  overlay_buttons_filters_button_text: {
+    color:'white',
+    textAlign:'center',
+    fontFamily: 'NunitoSans',
+    fontSize:14,
+    lineHeight:22
   },
   map: {
     height: '100%',

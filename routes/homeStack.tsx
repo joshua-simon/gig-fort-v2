@@ -78,7 +78,7 @@ export const MyStack = () => {
 
   return (
     <Stack.Navigator
-        initialRouteName="List"
+        initialRouteName="Map"
     >
       <Stack.Screen 
       name="Map" 

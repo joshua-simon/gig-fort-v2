@@ -28,7 +28,7 @@ const Footer = ({ navigation }) => {
             <Feather name="list" size={24} color="black" />
           )}
         </TouchableOpacity>
-        <Text style={styles.buttonLabel}>List</Text>
+        <Text style={styles.buttonLabel}>Browse</Text>
       </View>
 
       <View style={styles.buttonContainer}>

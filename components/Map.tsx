@@ -24,7 +24,6 @@ import { useGetUser } from "../hooks/useGetUser";
 import { useFocusEffect } from '@react-navigation/native';
 import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { buttonFilled,buttonFilled_text } from "../styles";
 // import CustomCallout from "./CustomCallout";
 
 
@@ -39,10 +38,41 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [ gigs, setGigs ] = useState([])
+  const [isNearMeActive, setIsNearMeActive] = useState(false);
   const {user} = useContext(AuthContext) || {}
   const userDetails = useGetUser(user?.uid);
-  const gigsDataFromHook = useGigs(userDetails?.userLocation);
-  // const { selectedLocation, setSelectedLocation } = useLocation();
+
+    //This hook retrieves user's location
+    useEffect(() => {
+      (async () => {
+        
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          setErrorMsg('Permission to access location was denied');
+          return;
+        }
+  
+        let location = await Location.getCurrentPositionAsync({});
+        setLocation(location);
+      })();
+    }, []);
+
+    const { gigsDataFromHook, isLoading, error, filterByProximity, resetFilter } = useGigs({
+      userCity: userDetails?.userLocation,
+      userLatitude: location?.coords.latitude,
+      userLongitude: location?.coords.longitude,
+    });
+
+    const handleNearMePress = () => {
+      if (isNearMeActive) {
+        resetFilter();
+        setIsNearMeActive(false);
+      } else {
+        filterByProximity();
+        setIsNearMeActive(true);
+      }
+    };
+
 
   useEffect(() => {
     if (gigsDataFromHook) {
@@ -71,6 +101,7 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
     },
     ...gig,
   })) || [];
+
 
 
   const groupedByVenue = {};
@@ -202,20 +233,6 @@ const renderMarker = (data) => {
   );
 
 
-  useEffect(() => {
-    (async () => {
-      
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  }, []);
-
   let text = 'Waiting..';
   if (errorMsg) {
     text = errorMsg;
@@ -270,7 +287,6 @@ const renderMarker = (data) => {
         </ClusteredMapView>
       </View>
       <View style={styles.overlay}>
-
         <View style={styles.overlay_header}>
           <Image
             source={require("../assets/Icon_White_48x48_new.png")}
@@ -282,15 +298,22 @@ const renderMarker = (data) => {
           </TouchableOpacity>
           <Feather name="menu" size={24} color="white" style={{ paddingTop: "5%" }} />
         </View>
-
         <View style={styles.overlay_buttons}>
           <View style={styles.overlay_buttons_filters}>
-            <TouchableOpacity style={styles.overlay_buttons_filters_button}>
-              <View style={styles.overlay_buttons_filters_button_details}>
-                <Feather name="map-pin" size={12} color="white" />
-                <Text style={styles.overlay_buttons_filters_button_text}> Near me</Text>
-              </View>
-            </TouchableOpacity>
+          <TouchableOpacity 
+            style={[
+              styles.overlay_buttons_filters_button,
+              isNearMeActive && styles.overlay_buttons_filters_button_active
+            ]}
+            onPress={handleNearMePress}
+          >
+            <View style={styles.overlay_buttons_filters_button_details}>
+              <Feather name="map-pin" size={12} color="white" />
+              <Text style={styles.overlay_buttons_filters_button_text}>
+                {isNearMeActive ? " Show All" : " Near me"}
+              </Text>
+            </View>
+          </TouchableOpacity>
             <TouchableOpacity style={styles.overlay_buttons_filters_button}>
               <View style={styles.overlay_buttons_filters_button_details}>
                 <AntDesign name="clockcircleo" size={12} color="white" />
@@ -383,6 +406,9 @@ const styles = StyleSheet.create({
     fontSize:14,
     lineHeight:22,
     paddingRight:1,
+  },
+  overlay_buttons_filters_button_active: {
+    backgroundColor: '#2596be', 
   },
   map: {
     height: '100%',

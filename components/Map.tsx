@@ -254,10 +254,10 @@ const renderMarker = (data) => {
   return (
     <View style={styles.container}>
       <StatusBar translucent backgroundColor="transparent" />
-      <View style = {styles.mapElements}>
+      <View style={styles.mapElements}>
       </View>
       <View style={styles.mapContainer}>
-      <ClusteredMapView
+        <ClusteredMapView
           region={mapRegion}
           style={styles.map}
           data={venuesData}
@@ -270,34 +270,37 @@ const renderMarker = (data) => {
         </ClusteredMapView>
       </View>
       <View style={styles.overlay}>
-        <View style = {styles.overlay_header}>
-            <Image
-              source = {require("../assets/Icon_White_48x48_new.png")}
-              style = {{width:12,height:28}}
-            />
-            <Feather name="menu" size={24} color="white" style = {{paddingTop:"5%"}}/>
-        </View>
-        <View style ={styles.overlay_buttons}>
+
+        <View style={styles.overlay_header}>
+          <Image
+            source={require("../assets/Icon_White_48x48_new.png")}
+            style={{ width: 12, height: 28,marginBottom:4 }}
+          />
           <TouchableOpacity style = {styles.overlay_button}>
-              <Text style = {buttonFilled_text}>Today, 22nd August</Text>
+            <Text style={styles.overlay_button_text}>Today, 22nd August  </Text>
+            <AntDesign name="caretdown" size={16} color="white" />
           </TouchableOpacity>
-          <View style ={styles.overlay_buttons_filters}>
-            <TouchableOpacity style ={styles.overlay_buttons_filters_button}>
-              <View style ={styles.overlay_buttons_filters_button_details}>
+          <Feather name="menu" size={24} color="white" style={{ paddingTop: "5%" }} />
+        </View>
+
+        <View style={styles.overlay_buttons}>
+          <View style={styles.overlay_buttons_filters}>
+            <TouchableOpacity style={styles.overlay_buttons_filters_button}>
+              <View style={styles.overlay_buttons_filters_button_details}>
                 <Feather name="map-pin" size={12} color="white" />
-                <Text style = {styles.overlay_buttons_filters_button_text}> Near me</Text>
+                <Text style={styles.overlay_buttons_filters_button_text}> Near me</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style ={styles.overlay_buttons_filters_button}>
-              <View style ={styles.overlay_buttons_filters_button_details}>
+            <TouchableOpacity style={styles.overlay_buttons_filters_button}>
+              <View style={styles.overlay_buttons_filters_button_details}>
                 <AntDesign name="clockcircleo" size={12} color="white" />
-                <Text style = {styles.overlay_buttons_filters_button_text}> Starting soon</Text>
+                <Text style={styles.overlay_buttons_filters_button_text}> Starting soon</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style ={styles.overlay_buttons_filters_button}>
-              <View style ={styles.overlay_buttons_filters_button_details}>
+            <TouchableOpacity style={styles.overlay_buttons_filters_button}>
+              <View style={styles.overlay_buttons_filters_button_details}>
                 <Feather name="sliders" size={12} color="white" />
-                <Text style = {styles.overlay_buttons_filters_button_text}> Custom filters</Text>
+                <Text style={styles.overlay_buttons_filters_button_text}> Custom filters</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -321,15 +324,15 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 220, 
+    height: 75, 
     zIndex: 1000,
-    backgroundColor:'rgba(127, 154, 166, 0.5)'
+    backgroundColor:'rgba(62, 81, 95, 0.7)'
   },
   overlay_header: {
-    height:'45%',
+    height:'90%',
     flexDirection:'row',
     justifyContent: 'space-between',
-    alignItems:'center',
+    alignItems:'flex-end',
     paddingHorizontal: 15
   },
   overlay_buttons:{
@@ -341,39 +344,28 @@ const styles = StyleSheet.create({
     paddingTop: 10
   },
   overlay_button: {
-    backgroundColor:'#0088AD',
-    padding: 10,
-    borderRadius: 4,
+    flexDirection:'row',
+    borderRadius: 18,
     alignItems: 'center',
-    marginBottom: 10,
-    width:"70%",
-    marginTop:15,
-    alignSelf:"center",
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-      },
-      android: {
-        elevation: 5,
-      },
-    }),
+    width:"60%",
+  },
+  overlay_button_text: {
+    color:'#FFFFFF',
+    textAlign:'center',
+    fontFamily: 'NunitoSans',
+    fontSize:18,
+    alignItems:'center',
   },
   overlay_buttons_filters: {
     flexDirection: "row",
     justifyContent: "space-evenly"
   },
   overlay_buttons_filters_button:{
-    backgroundColor:'#0088AD',
+    backgroundColor:'rgba(84, 96, 104, 0.9)',
     // borderWidth: 1,
     // borderColor: 'white',
-    padding: 5,
-    borderRadius: 4,
+    padding: 6,
+    borderRadius: 15,
     alignItems: 'center',
     marginBottom: 10,
     width:"auto",
@@ -389,7 +381,8 @@ const styles = StyleSheet.create({
     textAlign:'center',
     fontFamily: 'NunitoSans',
     fontSize:14,
-    lineHeight:22
+    lineHeight:22,
+    paddingRight:1,
   },
   map: {
     height: '100%',

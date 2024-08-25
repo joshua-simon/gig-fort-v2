@@ -110,3 +110,24 @@ export const filterGigsByStartTime = (gigs, minutesThreshold: number = 30) => {
     return gigTime >= now && gigTime <= threshold;
   });
 };
+
+export const filterGigsByStartTimeCustom = (gigs, minutesThreshold: number = 30) => {
+  const now = new Date().getTime() / 1000;
+  const threshold = now + minutesThreshold * 60;
+
+  return gigs.filter(gig => {
+    const gigTime = gig.dateAndTime.seconds;
+    return gigTime >= now && gigTime <= threshold;
+  });
+};
+
+export const filterGigsByProximityCustom = (gigs, userLat: number, userLon: number, radiusKm: number = 1) => {
+  return gigs.filter(gig => {
+    const distance = getDistanceFromLatLonInKm(userLat, userLon, gig.location.latitude, gig.location.longitude);
+    return distance <= radiusKm;
+  });
+};
+
+export const filterGigsByGenre = (gigs, genres: string[]) => {
+  return gigs.filter(gig => genres.includes(gig.genre));
+};

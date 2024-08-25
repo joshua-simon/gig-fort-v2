@@ -21,9 +21,9 @@ import ClusteredMapView from 'react-native-maps-super-cluster';
 import { Entypo } from '@expo/vector-icons';
 import { AuthContext } from "../AuthContext";
 import { useGetUser } from "../hooks/useGetUser";
-import { useFocusEffect } from '@react-navigation/native';
 import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import CustomFiltersModal from "./CustomFiltersModal";
 // import CustomCallout from "./CustomCallout";
 
 
@@ -38,6 +38,7 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [ gigs, setGigs ] = useState([])
+  const [isCustomFiltersModalVisible, setIsCustomFiltersModalVisible] = useState(false);
   const {user} = useContext(AuthContext) || {}
   const userDetails = useGetUser(user?.uid);
 
@@ -77,6 +78,10 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
   
     const handleStartingSoonPress = () => {
       filterByStartTime();
+    };
+
+    const handleCustomFiltersPress = () => {
+      setIsCustomFiltersModalVisible(true);
     };
 
 
@@ -327,15 +332,29 @@ const renderMarker = (data) => {
                 </Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.overlay_buttons_filters_button}>
+            <TouchableOpacity 
+              style={[
+                styles.overlay_buttons_filters_button,
+                // customFilters && styles.overlay_buttons_filters_button_active
+              ]}
+              onPress={handleCustomFiltersPress}
+            >
               <View style={styles.overlay_buttons_filters_button_details}>
                 <Feather name="sliders" size={12} color="white" />
-                <Text style={styles.overlay_buttons_filters_button_text}> Custom filters</Text>
+                <Text style={styles.overlay_buttons_filters_button_text}>
+                  Custom filters
+                  {/* {customFilters ? "Custom" : "Custom filters"} */}
+                </Text>
               </View>
             </TouchableOpacity>
           </View>
         </View>
       </View>
+      <CustomFiltersModal
+        isVisible={isCustomFiltersModalVisible}
+        onClose={() => setIsCustomFiltersModalVisible(false)}
+        onApply={handleApplyCustomFilters}
+      />
     </View>
   );
 };

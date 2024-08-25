@@ -2,22 +2,30 @@ import { useState, useEffect, useCallback } from 'react';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { GigObject } from '../routes/homeStack';
-import { filterGigsByProximity, filterGigsByStartTime } from '../util/helperFunctions';
+import { filterGigsByProximity, filterGigsByStartTime, filterGigsByGenre } from '../util/helperFunctions';
 
 export interface Time {
   nanoseconds: number;
   seconds: number;
 }
 
+export interface CustomFilters {
+  timeFrame: number;
+  distance: number;
+  genres: string[];
+}
+
 interface UseGigsResult {
   gigsDataFromHook: GigObject[];
   isLoading: boolean;
   error: string | null;
-  isNearMeActive:any,
-  isStartingSoonActive: any,
   filterByProximity: () => void;
   filterByStartTime: () => void;
+  applyCustomFilters: (filters: CustomFilters) => void;
   resetFilter: () => void;
+  isNearMeActive: boolean;
+  isStartingSoonActive: boolean;
+  customFilters: CustomFilters | null;
 }
 
 interface UseGigsParams {
@@ -33,6 +41,7 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
   const [error, setError] = useState<string | null>(null);
   const [isNearMeActive, setIsNearMeActive] = useState(false);
   const [isStartingSoonActive, setIsStartingSoonActive] = useState(false);
+  const [customFilters, setCustomFilters] = useState<CustomFilters | null>(null);
 
   useEffect(() => {
     let gigQuery;
@@ -79,15 +88,27 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
     let filteredResult = [...gigs];
 
     if (isNearMeActive && userLatitude !== undefined && userLongitude !== undefined) {
-      filteredResult = filterGigsByProximity(filteredResult, userLatitude, userLongitude, 1);
+      filteredResult = filterGigsByProximity(
+        filteredResult, 
+        userLatitude, 
+        userLongitude, 
+        customFilters?.distance || 1
+      );
     }
 
-    if (isStartingSoonActive) {
-      filteredResult = filterGigsByStartTime(filteredResult, 30);
+    if (isStartingSoonActive || customFilters?.timeFrame) {
+      filteredResult = filterGigsByStartTime(
+        filteredResult, 
+        customFilters?.timeFrame || 30
+      );
+    }
+
+    if (customFilters?.genres.length) {
+      filteredResult = filterGigsByGenre(filteredResult, customFilters.genres);
     }
 
     setFilteredGigs(filteredResult);
-  }, [isNearMeActive, isStartingSoonActive, userLatitude, userLongitude]);
+  }, [isNearMeActive, isStartingSoonActive, customFilters, userLatitude, userLongitude]);
 
   const filterByProximity = useCallback(() => {
     setIsNearMeActive(prev => !prev);
@@ -99,15 +120,21 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
     applyFilters(allGigs);
   }, [allGigs, applyFilters]);
 
+  const applyCustomFilters = useCallback((filters: CustomFilters) => {
+    setCustomFilters(filters);
+    applyFilters(allGigs);
+  }, [allGigs, applyFilters]);
+
   const resetFilter = useCallback(() => {
     setIsNearMeActive(false);
     setIsStartingSoonActive(false);
+    setCustomFilters(null);
     setFilteredGigs(allGigs);
   }, [allGigs]);
 
   useEffect(() => {
     applyFilters(allGigs);
-  }, [isNearMeActive, isStartingSoonActive, allGigs, applyFilters]);
+  }, [isNearMeActive, isStartingSoonActive, customFilters, allGigs, applyFilters]);
 
   return { 
     gigsDataFromHook: filteredGigs, 
@@ -115,8 +142,10 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
     error, 
     filterByProximity, 
     filterByStartTime, 
+    applyCustomFilters,
     resetFilter,
     isNearMeActive,
-    isStartingSoonActive
+    isStartingSoonActive,
+    customFilters
   };
 };

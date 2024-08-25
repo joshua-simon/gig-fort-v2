@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { GigObject } from '../routes/homeStack';
-import { filterGigsByProximity } from '../util/helperFunctions';
+import { filterGigsByProximity, filterGigsByStartTime } from '../util/helperFunctions';
 
 export interface Time {
   nanoseconds: number;
@@ -13,7 +13,10 @@ interface UseGigsResult {
   gigsDataFromHook: GigObject[];
   isLoading: boolean;
   error: string | null;
+  isNearMeActive:any,
+  isStartingSoonActive: any,
   filterByProximity: () => void;
+  filterByStartTime: () => void;
   resetFilter: () => void;
 }
 
@@ -28,6 +31,8 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
   const [filteredGigs, setFilteredGigs] = useState<GigObject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isNearMeActive, setIsNearMeActive] = useState(false);
+  const [isStartingSoonActive, setIsStartingSoonActive] = useState(false);
 
   useEffect(() => {
     let gigQuery;
@@ -60,7 +65,7 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
         city: doc.data().city || "Unknown City",
       }));
       setAllGigs(queriedGigs);
-      setFilteredGigs(queriedGigs);
+      applyFilters(queriedGigs);
       setIsLoading(false);
     }, (err) => {
       setError('Failed to fetch gigs');
@@ -70,27 +75,48 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
     return () => unsubscribe();
   }, [userCity]);
 
-  const filterByProximity = useCallback(() => {
-    if (userLatitude !== undefined && userLongitude !== undefined) {
-      try {
-        const nearbyGigs = filterGigsByProximity(
-          allGigs,
-          userLatitude,
-          userLongitude,
-          1 // 1km radius, adjust as needed
-        );
-        setFilteredGigs(nearbyGigs);
-      } catch (err) {
-        setError('Failed to filter gigs by proximity');
-      }
-    } else {
-      setError('User coordinates are not available');
+  const applyFilters = useCallback((gigs: GigObject[]) => {
+    let filteredResult = [...gigs];
+
+    if (isNearMeActive && userLatitude !== undefined && userLongitude !== undefined) {
+      filteredResult = filterGigsByProximity(filteredResult, userLatitude, userLongitude, 1);
     }
-  }, [allGigs, userLatitude, userLongitude]);
+
+    if (isStartingSoonActive) {
+      filteredResult = filterGigsByStartTime(filteredResult, 30);
+    }
+
+    setFilteredGigs(filteredResult);
+  }, [isNearMeActive, isStartingSoonActive, userLatitude, userLongitude]);
+
+  const filterByProximity = useCallback(() => {
+    setIsNearMeActive(prev => !prev);
+    applyFilters(allGigs);
+  }, [allGigs, applyFilters]);
+
+  const filterByStartTime = useCallback(() => {
+    setIsStartingSoonActive(prev => !prev);
+    applyFilters(allGigs);
+  }, [allGigs, applyFilters]);
 
   const resetFilter = useCallback(() => {
+    setIsNearMeActive(false);
+    setIsStartingSoonActive(false);
     setFilteredGigs(allGigs);
   }, [allGigs]);
 
-  return { gigsDataFromHook: filteredGigs, isLoading, error, filterByProximity, resetFilter };
+  useEffect(() => {
+    applyFilters(allGigs);
+  }, [isNearMeActive, isStartingSoonActive, allGigs, applyFilters]);
+
+  return { 
+    gigsDataFromHook: filteredGigs, 
+    isLoading, 
+    error, 
+    filterByProximity, 
+    filterByStartTime, 
+    resetFilter,
+    isNearMeActive,
+    isStartingSoonActive
+  };
 };

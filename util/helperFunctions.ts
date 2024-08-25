@@ -100,3 +100,13 @@ export const filterGigsByProximity = (
     return distance <= radiusKm;
   });
 }
+
+export const filterGigsByStartTime = (gigs, minutesThreshold: number = 30) => {
+  const now = new Date().getTime() / 1000; // Current time in seconds
+  const threshold = now + minutesThreshold * 60; // Threshold time in seconds
+
+  return gigs.filter(gig => {
+    const gigTime = gig.dateAndTime.seconds;
+    return gigTime >= now && gigTime <= threshold;
+  });
+};

@@ -38,7 +38,6 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [ gigs, setGigs ] = useState([])
-  const [isNearMeActive, setIsNearMeActive] = useState(false);
   const {user} = useContext(AuthContext) || {}
   const userDetails = useGetUser(user?.uid);
 
@@ -57,20 +56,27 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
       })();
     }, []);
 
-    const { gigsDataFromHook, isLoading, error, filterByProximity, resetFilter } = useGigs({
+    const { 
+      gigsDataFromHook, 
+      isLoading, 
+      error, 
+      filterByProximity, 
+      filterByStartTime, 
+      resetFilter,
+      isNearMeActive,
+      isStartingSoonActive
+    } = useGigs({
       userCity: userDetails?.userLocation,
       userLatitude: location?.coords.latitude,
       userLongitude: location?.coords.longitude,
     });
 
     const handleNearMePress = () => {
-      if (isNearMeActive) {
-        resetFilter();
-        setIsNearMeActive(false);
-      } else {
-        filterByProximity();
-        setIsNearMeActive(true);
-      }
+      filterByProximity();
+    };
+  
+    const handleStartingSoonPress = () => {
+      filterByStartTime();
     };
 
 
@@ -79,13 +85,6 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
       setGigs(gigsDataFromHook);
     }
   }, [gigsDataFromHook]);
-
-  useFocusEffect(
-    useCallback(() => {
-      StatusBar.setBackgroundColor('#2596be');
-      return () => {};  // optional cleanup 
-    }, [])
-  );
 
 
   //Filtering through gigs to return only current day's gigs
@@ -310,14 +309,22 @@ const renderMarker = (data) => {
             <View style={styles.overlay_buttons_filters_button_details}>
               <Feather name="map-pin" size={12} color="white" />
               <Text style={styles.overlay_buttons_filters_button_text}>
-                {isNearMeActive ? " Show All" : " Near me"}
+                {isNearMeActive ? " Nearby" : " Near me"}
               </Text>
             </View>
           </TouchableOpacity>
-            <TouchableOpacity style={styles.overlay_buttons_filters_button}>
+          <TouchableOpacity 
+              style={[
+                styles.overlay_buttons_filters_button,
+                isStartingSoonActive && styles.overlay_buttons_filters_button_active
+              ]}
+              onPress={handleStartingSoonPress}
+            >
               <View style={styles.overlay_buttons_filters_button_details}>
                 <AntDesign name="clockcircleo" size={12} color="white" />
-                <Text style={styles.overlay_buttons_filters_button_text}> Starting soon</Text>
+                <Text style={styles.overlay_buttons_filters_button_text}>
+                  {isStartingSoonActive ? " Soon" : " Starting soon"}
+                </Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.overlay_buttons_filters_button}>

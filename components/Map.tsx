@@ -24,6 +24,7 @@ import { useGetUser } from "../hooks/useGetUser";
 import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import CustomFiltersModal from "./CustomFiltersModal";
+import CustomFilters from "./CustomFilters";
 // import CustomCallout from "./CustomCallout";
 
 
@@ -348,15 +349,12 @@ const renderMarker = (data) => {
         </View>
       </View>
       <CustomFiltersModal 
-    isVisible={isPanelVisible} 
-    onClose={() => setIsPanelVisible(false)}
-    style={{ zIndex: 1002 }} // Ensure this is higher than other elements
-  >
-    <View style={styles.modalContent}>
-      <Text style={styles.modalTitle}>Custom Filters</Text>
-      {/* Add your filter options here */}
-    </View>
-  </CustomFiltersModal>
+        isVisible={isPanelVisible} 
+        onClose={() => setIsPanelVisible(false)}
+        style={{ zIndex: 1002 }} // Ensure this is higher than other elements
+      >
+        <CustomFilters />
+    </CustomFiltersModal>
     </View>
   );
 };

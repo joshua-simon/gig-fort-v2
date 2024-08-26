@@ -1,154 +1,114 @@
-import React, { useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import Slider from '@react-native-community/slider';
-import MultiSelect from 'react-native-multiple-select'; 
+import React, { useRef, useEffect } from 'react';
+import { View, StyleSheet, Animated, PanResponder, Dimensions, StatusBar } from 'react-native';
 
-interface CustomFiltersModalProps {
-  isVisible: boolean;
-  onClose: () => void;
-  onApply: (filters: CustomFilters) => void;
-}
+const { height, width } = Dimensions.get('window');
+const PANEL_HEIGHT = height * 0.6; // 60% of screen height
 
-interface CustomFilters {
-  timeFrame: number;
-  distance: number;
-  genres: string[];
-}
+const CustomFiltersModal = ({ children, isVisible, onClose }) => {
+  const panY = useRef(new Animated.Value(PANEL_HEIGHT)).current;
 
-const genresList = [
-  { id: '1', name: 'Rock' },
-  { id: '2', name: 'Pop' },
-  { id: '3', name: 'Jazz' },
-  { id: '4', name: 'Classical' },
-  { id: '5', name: 'Electronic' },
-  // Add more genres as needed
-];
+  const resetPositionAnim = Animated.timing(panY, {
+    toValue: 0,
+    duration: 300,
+    useNativeDriver: true,
+  });
 
-const CustomFiltersModal: React.FC<CustomFiltersModalProps> = ({ isVisible, onClose, onApply }) => {
-  const [timeFrame, setTimeFrame] = useState(60); // Default to 1 hour
-  const [distance, setDistance] = useState(5); // Default to 5km
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const closeAnim = Animated.timing(panY, {
+    toValue: PANEL_HEIGHT,
+    duration: 300,
+    useNativeDriver: true,
+  });
 
-  const handleApply = () => {
-    onApply({ timeFrame, distance, genres: selectedGenres });
-    onClose();
-  };
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => false,
+      onPanResponderMove: (e, gestureState) => {
+        const newValue = Math.max(0, Math.min(PANEL_HEIGHT, gestureState.dy));
+        panY.setValue(newValue);
+      },
+      onPanResponderRelease: (e, gestureState) => {
+        if (gestureState.dy > PANEL_HEIGHT / 3 || gestureState.vy > 0.5) {
+          closeAnim.start(() => onClose());
+        } else {
+          resetPositionAnim.start();
+        }
+      },
+    })
+  ).current;
+
+  useEffect(() => {
+    if (isVisible) {
+      resetPositionAnim.start();
+    } else {
+      closeAnim.start();
+    }
+  }, [isVisible]);
+
+  if (!isVisible) return null;
 
   return (
-    <Modal visible={isVisible} animationType="slide" transparent={true}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <Text style={styles.title}>Custom Filters</Text>
-
-          <Text style={styles.label}>Select Time Frame</Text>
-          <Slider
-            style={styles.slider}
-            value={timeFrame}
-            onValueChange={setTimeFrame}
-            minimumValue={30}
-            maximumValue={240}
-            step={30}
-            minimumTrackTintColor="#007AFF"
-            maximumTrackTintColor="#000000"
-          />
-          <Text style={styles.value}>{timeFrame} minutes</Text>
-
-          <Text style={styles.label}>Select Distance</Text>
-          <Slider
-            style={styles.slider}
-            value={distance}
-            onValueChange={setDistance}
-            minimumValue={1}
-            maximumValue={50}
-            step={1}
-            minimumTrackTintColor="#007AFF"
-            maximumTrackTintColor="#000000"
-          />
-          <Text style={styles.value}>{distance} km</Text>
-
-          <Text style={styles.label}>Select Genres</Text>
-          <MultiSelect
-            items={genresList}
-            uniqueKey="id"
-            onSelectedItemsChange={setSelectedGenres}
-            selectedItems={selectedGenres}
-            selectText="Pick Genres"
-            searchInputPlaceholderText="Search Genres..."
-            tagRemoveIconColor="#CCC"
-            tagBorderColor="#CCC"
-            tagTextColor="#CCC"
-            selectedItemTextColor="#CCC"
-            selectedItemIconColor="#CCC"
-            itemTextColor="#000"
-            displayKey="name"
-            searchInputStyle={{ color: '#CCC' }}
-            submitButtonColor="#CCC"
-            submitButtonText="Submit"
-          />
-
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={handleApply}>
-              <Text style={styles.buttonText}>Apply Filters</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={onClose}>
-              <Text style={styles.buttonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
+    <View style={styles.overlay}>
+      <Animated.View
+        style={[
+          styles.container,
+          {
+            transform: [{ translateY: panY }],
+          },
+        ]}
+        {...panResponder.panHandlers}
+      >
+        <View style={styles.content}>
+          <View style={styles.dragHandler} />
+          {children}
         </View>
-      </View>
-    </Modal>
+      </Animated.View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    zIndex: 1001,
   },
-  modalContent: {
+  container: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: PANEL_HEIGHT,
     backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  slider: {
-    width: '100%',
-    height: 40,
-  },
-  value: {
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 10,
-    borderRadius: 5,
+  content: {
     flex: 1,
-    marginHorizontal: 5,
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
-  cancelButton: {
-    backgroundColor: '#FF3B30',
-  },
-  buttonText: {
-    color: 'white',
-    textAlign: 'center',
+  dragHandler: {
+    width: 60,
+    height: 5,
+    backgroundColor: '#ccc',
+    borderRadius: 3,
+    alignSelf: 'center',
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 

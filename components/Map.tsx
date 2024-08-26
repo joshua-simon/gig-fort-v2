@@ -1,4 +1,4 @@
-import { FC,useState,useMemo,useEffect,useContext,useCallback } from "react";
+import { FC,useState,useMemo,useEffect,useContext,useCallback,useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -38,7 +38,7 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [ gigs, setGigs ] = useState([])
-  const [isCustomFiltersModalVisible, setIsCustomFiltersModalVisible] = useState(false);
+  const [isPanelVisible, setIsPanelVisible] = useState(false);
   const {user} = useContext(AuthContext) || {}
   const userDetails = useGetUser(user?.uid);
 
@@ -80,10 +80,9 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
       filterByStartTime();
     };
 
-    const handleCustomFiltersPress = () => {
-      setIsCustomFiltersModalVisible(true);
+    const togglePanel = () => {
+      setIsPanelVisible(!isPanelVisible);
     };
-
 
   useEffect(() => {
     if (gigsDataFromHook) {
@@ -286,6 +285,8 @@ const renderMarker = (data) => {
           provider={PROVIDER_GOOGLE}
           renderMarker={renderMarker} // Custom rendering for markers
           renderCluster={renderCluster} // Custom rendering for clusters
+          scrollEnabled={!isPanelVisible}
+          zoomEnabled={!isPanelVisible}
         >
           {userMarker}
         </ClusteredMapView>
@@ -313,9 +314,7 @@ const renderMarker = (data) => {
           >
             <View style={styles.overlay_buttons_filters_button_details}>
               <Feather name="map-pin" size={12} color="white" />
-              <Text style={styles.overlay_buttons_filters_button_text}>
-                {isNearMeActive ? " Nearby" : " Near me"}
-              </Text>
+              <Text style={styles.overlay_buttons_filters_button_text}> Near me</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity 
@@ -327,9 +326,7 @@ const renderMarker = (data) => {
             >
               <View style={styles.overlay_buttons_filters_button_details}>
                 <AntDesign name="clockcircleo" size={12} color="white" />
-                <Text style={styles.overlay_buttons_filters_button_text}>
-                  {isStartingSoonActive ? " Soon" : " Starting soon"}
-                </Text>
+                <Text style={styles.overlay_buttons_filters_button_text}> Starting soon</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity 
@@ -337,7 +334,7 @@ const renderMarker = (data) => {
                 styles.overlay_buttons_filters_button,
                 // customFilters && styles.overlay_buttons_filters_button_active
               ]}
-              onPress={handleCustomFiltersPress}
+              onPress={togglePanel}
             >
               <View style={styles.overlay_buttons_filters_button_details}>
                 <Feather name="sliders" size={12} color="white" />
@@ -350,11 +347,16 @@ const renderMarker = (data) => {
           </View>
         </View>
       </View>
-      <CustomFiltersModal
-        isVisible={isCustomFiltersModalVisible}
-        onClose={() => setIsCustomFiltersModalVisible(false)}
-        onApply={handleApplyCustomFilters}
-      />
+      <CustomFiltersModal 
+    isVisible={isPanelVisible} 
+    onClose={() => setIsPanelVisible(false)}
+    style={{ zIndex: 1002 }} // Ensure this is higher than other elements
+  >
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>Custom Filters</Text>
+      {/* Add your filter options here */}
+    </View>
+  </CustomFiltersModal>
     </View>
   );
 };
@@ -435,6 +437,15 @@ const styles = StyleSheet.create({
   },
   overlay_buttons_filters_button_active: {
     backgroundColor: '#2596be', 
+  },
+  modalContent: {
+    flex: 1,
+    padding: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
   map: {
     height: '100%',

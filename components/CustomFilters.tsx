@@ -1,27 +1,36 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, PanResponder } from 'react-native';
+import { View, Text, StyleSheet, PanResponder, TouchableOpacity, ScrollView, PanResponderGestureState } from 'react-native';
 
-const CustomSlider = ({ min, max, step, value, onValueChange, unit }) => {
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (_, gestureState) => {
-        const newValue = calculateValue(gestureState.moveX);
-        onValueChange(newValue);
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        const newValue = calculateValue(gestureState.moveX);
-        onValueChange(newValue);
-      },
-    })
-  ).current;
+interface CustomSliderProps {
+  min: number;
+  max: number;
+  step: number;
+  value: number;
+  onValueChange: (value: number) => void;
+  unit: 'km' | 'min';
+}
 
-  const calculateValue = (x) => {
+const CustomSlider: React.FC<CustomSliderProps> = ({ min, max, step, value, onValueChange, unit }) => {
+  const calculateValue = (x: number): number => {
     const sliderWidth = 280; // This should match the width in styles
     const ratio = Math.max(0, Math.min(1, (x - 20) / sliderWidth));
     const newValue = min + ratio * (max - min);
     return Math.round(newValue / step) * step;
   };
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (_, gestureState: PanResponderGestureState) => {
+        const newValue = calculateValue(gestureState.moveX);
+        onValueChange(newValue);
+      },
+      onPanResponderRelease: (_, gestureState: PanResponderGestureState) => {
+        const newValue = calculateValue(gestureState.moveX);
+        onValueChange(newValue);
+      },
+    })
+  ).current;
 
   const percentage = ((value - min) / (max - min)) * 100;
 
@@ -38,18 +47,57 @@ const CustomSlider = ({ min, max, step, value, onValueChange, unit }) => {
   );
 };
 
-const formatTime = (minutes) => {
+const formatTime = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
   return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 };
 
-const CustomFilters = () => {
-  const [distance, setDistance] = useState(0);
-  const [timeInterval, setTimeInterval] = useState(0);
+interface GenreSelectorProps {
+  genres: string[];
+  selectedGenres: string[];
+  onGenreToggle: (genre: string) => void;
+}
+
+const GenreSelector: React.FC<GenreSelectorProps> = ({ genres, selectedGenres, onGenreToggle }) => {
+  const renderGenreChip = (genre: string) => {
+    const isSelected = selectedGenres.includes(genre);
+    return (
+      <TouchableOpacity
+        key={genre}
+        style={[styles.genreChip, isSelected && styles.selectedChip]}
+        onPress={() => onGenreToggle(genre)}
+      >
+        <Text style={[styles.genreText, isSelected && styles.selectedText]}>
+          {genre}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <View style={styles.filterContainer}>
+    <View style={styles.chipContainer}>
+      {genres.map(renderGenreChip)}
+    </View>
+  );
+};
+
+const CustomFilters: React.FC = () => {
+  const [distance, setDistance] = useState<number>(0);
+  const [timeInterval, setTimeInterval] = useState<number>(0);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const genres: string[] = ["Jazz", "Funk", "Soul", "Neo Soul", "Latin", "Afro-Cuban"];
+
+  const toggleGenre = (genre: string) => {
+    setSelectedGenres(prevSelected =>
+      prevSelected.includes(genre)
+        ? prevSelected.filter(g => g !== genre)
+        : [...prevSelected, genre]
+    );
+  };
+
+  return (
+    <ScrollView style={styles.filterContainer}>
       <Text style={styles.title}>Custom filters</Text>
       <Text style={styles.subtitle}>Distance</Text>
       <CustomSlider
@@ -69,7 +117,13 @@ const CustomFilters = () => {
         onValueChange={setTimeInterval}
         unit="min"
       />
-    </View>
+      <Text style={styles.subtitle}>Genres</Text>
+      <GenreSelector
+        genres={genres}
+        selectedGenres={selectedGenres}
+        onGenreToggle={toggleGenre}
+      />
+    </ScrollView>
   );
 };
 
@@ -116,6 +170,32 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 5,
+    fontFamily: "NunitoSans"
+  },
+  chipContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+  },
+  genreChip: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    margin: 5,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  selectedChip: {
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF',
+  },
+  genreText: {
+    fontSize: 14,
+    color: '#333',
+  },
+  selectedText: {
+    color: '#fff',
   },
 });
 

@@ -10,6 +10,18 @@ interface CustomSliderProps {
   unit: 'km' | 'min';
 }
 
+interface CustomModalProps {
+    visible: boolean;
+    onClose: () => void;
+    onApply: (filters: CustomFilters) => void;
+  }
+  
+  interface CustomFilters {
+    distance: number;
+    timeInterval: number;
+    genres: string[];
+  }
+
 const CustomSlider: React.FC<CustomSliderProps> = ({ min, max, step, value, onValueChange, unit }) => {
   const sliderWidth = 280;
   const [sliderPosition, setSliderPosition] = useState({ x: 0, y: 0 });
@@ -101,7 +113,7 @@ interface CustomModalProps {
   onClose: () => void;
 }
 
-const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose }) => {
+const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose, onApply }) => {
   const [distance, setDistance] = useState<number>(0);
   const [timeInterval, setTimeInterval] = useState<number>(0);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -113,6 +125,16 @@ const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose }) => {
         ? prevSelected.filter(g => g !== genre)
         : [...prevSelected, genre]
     );
+  };
+
+  const handleApply = () => {
+    const filters: CustomFilters = {
+      distance,
+      timeInterval,
+      genres: selectedGenres,
+    };
+    onApply(filters);
+    onClose();
   };
 
   return (
@@ -154,9 +176,14 @@ const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose }) => {
             onGenreToggle={toggleGenre}
           />
         </ScrollView>
-        <TouchableOpacity onPress={onClose} style={styles.exitButton}>
-          <Text>Close</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={onClose} style={styles.button}>
+            <Text>Close</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleApply} style={[styles.button, styles.applyButton]}>
+            <Text style={styles.applyButtonText}>Apply</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     </Modal>
   );
@@ -245,6 +272,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#DDDDDD',
     borderRadius: 5,
     alignItems: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 20,
+  },
+  button: {
+    padding: 10,
+    backgroundColor: '#DDDDDD',
+    borderRadius: 5,
+    alignItems: 'center',
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  applyButton: {
+    padding: 10,
+    backgroundColor: '#007AFF',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  applyButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

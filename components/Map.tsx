@@ -40,6 +40,7 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
   const [ gigs, setGigs ] = useState([])
   const [isPanelVisible, setIsPanelVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState(null);
   const {user} = useContext(AuthContext) || {}
   const userDetails = useGetUser(user?.uid);
 
@@ -66,7 +67,8 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
       isLoading, 
       error, 
       filterByProximity, 
-      filterByStartTime, 
+      filterByStartTime,
+      applyCustomFilters, 
       resetFilter,
       isNearMeActive,
       isStartingSoonActive
@@ -84,9 +86,16 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
       filterByStartTime();
     };
 
-    const togglePanel = () => {
-      setIsPanelVisible(!isPanelVisible);
+    useEffect(() => {
+      if (appliedFilters) {
+        applyCustomFilters(appliedFilters);
+      }
+    }, [appliedFilters, applyCustomFilters]);
+  
+    const handleApplyFilters = (filters) => {
+      setAppliedFilters(filters);
     };
+  
 
   useEffect(() => {
     if (gigsDataFromHook) {
@@ -336,7 +345,11 @@ const renderMarker = (data) => {
       <TouchableOpacity onPress={openModal} style={styles.button}>
         <Text>Open Modal</Text>
       </TouchableOpacity>
-      <CustomModal visible={modalVisible} onClose={closeModal} />
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onApply={handleApplyFilters}
+      />
           </View>
         </View>
       </View>

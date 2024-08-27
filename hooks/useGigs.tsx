@@ -125,6 +125,7 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
     applyFilters(allGigs);
   }, [allGigs, applyFilters]);
 
+
   const resetFilter = useCallback(() => {
     setIsNearMeActive(false);
     setIsStartingSoonActive(false);

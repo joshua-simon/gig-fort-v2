@@ -129,5 +129,8 @@ export const filterGigsByProximityCustom = (gigs, userLat: number, userLon: numb
 };
 
 export const filterGigsByGenre = (gigs, genres: string[]) => {
-  return gigs.filter(gig => genres.includes(gig.genre));
+  return gigs.filter(gig => 
+    gig.genreTags.some(tag => genres.includes(tag))
+  );
 };
+

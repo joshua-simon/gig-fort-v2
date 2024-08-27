@@ -23,8 +23,7 @@ import { AuthContext } from "../AuthContext";
 import { useGetUser } from "../hooks/useGetUser";
 import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import CustomFiltersModal from "./CustomFiltersModal";
-import CustomFilters from "./CustomFilters";
+import CustomModal from "./CustomModal";
 // import CustomCallout from "./CustomCallout";
 
 
@@ -40,8 +39,12 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [ gigs, setGigs ] = useState([])
   const [isPanelVisible, setIsPanelVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const {user} = useContext(AuthContext) || {}
   const userDetails = useGetUser(user?.uid);
+
+  const openModal = () => setModalVisible(true);
+  const closeModal = () => setModalVisible(false);
 
     //This hook retrieves user's location
     useEffect(() => {
@@ -330,31 +333,13 @@ const renderMarker = (data) => {
                 <Text style={styles.overlay_buttons_filters_button_text}> Starting soon</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={[
-                styles.overlay_buttons_filters_button,
-                // customFilters && styles.overlay_buttons_filters_button_active
-              ]}
-              onPress={togglePanel}
-            >
-              <View style={styles.overlay_buttons_filters_button_details}>
-                <Feather name="sliders" size={12} color="white" />
-                <Text style={styles.overlay_buttons_filters_button_text}>
-                  Custom filters
-                  {/* {customFilters ? "Custom" : "Custom filters"} */}
-                </Text>
-              </View>
-            </TouchableOpacity>
+      <TouchableOpacity onPress={openModal} style={styles.button}>
+        <Text>Open Modal</Text>
+      </TouchableOpacity>
+      <CustomModal visible={modalVisible} onClose={closeModal} />
           </View>
         </View>
       </View>
-      <CustomFiltersModal 
-        isVisible={isPanelVisible} 
-        onClose={() => setIsPanelVisible(false)}
-        style={{ zIndex: 1002 }} // Ensure this is higher than other elements
-      >
-        <CustomFilters />
-    </CustomFiltersModal>
     </View>
   );
 };

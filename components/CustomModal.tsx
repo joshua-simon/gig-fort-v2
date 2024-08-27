@@ -61,6 +61,107 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ min, max, step, value, onVa
   );
 };
 
+const formatTime = (minutes: number): string => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+};
+
+interface GenreSelectorProps {
+  genres: string[];
+  selectedGenres: string[];
+  onGenreToggle: (genre: string) => void;
+}
+
+const GenreSelector: React.FC<GenreSelectorProps> = ({ genres, selectedGenres, onGenreToggle }) => {
+  const renderGenreChip = (genre: string) => {
+    const isSelected = selectedGenres.includes(genre);
+    return (
+      <TouchableOpacity
+        key={genre}
+        style={[styles.genreChip, isSelected && styles.selectedChip]}
+        onPress={() => onGenreToggle(genre)}
+      >
+        <Text style={[styles.genreText, isSelected && styles.selectedText]}>
+          {genre}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <View style={styles.chipContainer}>
+      {genres.map(renderGenreChip)}
+    </View>
+  );
+};
+
+interface CustomModalProps {
+  visible: boolean;
+  onClose: () => void;
+}
+
+const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose }) => {
+  const [distance, setDistance] = useState<number>(0);
+  const [timeInterval, setTimeInterval] = useState<number>(0);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const genres: string[] = ["Jazz", "Funk", "Soul", "Neo Soul", "Latin", "Afro-Cuban"];
+
+  const toggleGenre = (genre: string) => {
+    setSelectedGenres(prevSelected =>
+      prevSelected.includes(genre)
+        ? prevSelected.filter(g => g !== genre)
+        : [...prevSelected, genre]
+    );
+  };
+
+  return (
+    <Modal
+      animationType="slide"
+      transparent={false}
+      visible={visible}
+      onRequestClose={onClose}
+    >
+      <SafeAreaView style={styles.modalContainer}>
+        <ScrollView 
+          style={styles.scrollView}
+          scrollEventThrottle={16}
+          scrollEnabled={true}
+        >
+          <Text style={styles.title}>Custom filters</Text>
+          <Text style={styles.subtitle}>Distance</Text>
+          <CustomSlider
+            min={0}
+            max={10}
+            step={0.1}
+            value={distance}
+            onValueChange={setDistance}
+            unit="km"
+          />
+          <Text style={styles.subtitle}>Time Interval</Text>
+          <CustomSlider
+            min={0}
+            max={60}
+            step={1}
+            value={timeInterval}
+            onValueChange={setTimeInterval}
+            unit="min"
+          />
+          <Text style={styles.subtitle}>Genres</Text>
+          <GenreSelector
+            genres={genres}
+            selectedGenres={selectedGenres}
+            onGenreToggle={toggleGenre}
+          />
+        </ScrollView>
+        <TouchableOpacity onPress={onClose} style={styles.exitButton}>
+          <Text>Close</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    </Modal>
+  );
+};
+
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,

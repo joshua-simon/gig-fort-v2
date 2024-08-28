@@ -1,14 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
-import { GigObject } from '../routes/homeStack';
+import { GigObject, CustomFilters } from '../types'; // Assume these types are defined elsewhere
 import { filterGigsByProximityCustom, filterGigsByStartTimeCustom, filterGigsByGenre } from '../util/helperFunctions';
-
-export interface CustomFilters {
-  distance: number;
-  timeInterval: number;
-  genres: string[];
-}
 
 interface UseGigsResult {
   gigsDataFromHook: GigObject[];
@@ -18,6 +12,8 @@ interface UseGigsResult {
   filterByStartTime: () => void;
   applyCustomFilters: (filters: CustomFilters) => void;
   resetFilter: () => void;
+  isNearMeActive: boolean;
+  isStartingSoonActive: boolean;
 }
 
 interface UseGigsParams {
@@ -53,6 +49,7 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
         isFree: doc.data().isFree || false,
         image: doc.data().image || "",
         genre: doc.data().genre || "",
+        genreTags: doc.data().genreTags || [],
         gigName: doc.data().gigName || "",
         blurb: doc.data().blurb || "",
         location: doc.data().location || { longitude: 0, latitude: 0 },
@@ -80,7 +77,8 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
     let filteredResult = [...gigs];
 
     if (customFilters) {
-      if (userLatitude !== undefined && userLongitude !== undefined) {
+      // Apply distance filter only if distance > 0
+      if (customFilters.distance > 0 && userLatitude !== undefined && userLongitude !== undefined) {
         filteredResult = filterGigsByProximityCustom(
           filteredResult,
           userLatitude,
@@ -89,15 +87,20 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
         );
       }
 
-      filteredResult = filterGigsByStartTimeCustom(
-        filteredResult,
-        customFilters.timeInterval
-      );
+      // Apply time interval filter only if timeInterval > 0
+      if (customFilters.timeInterval > 0) {
+        filteredResult = filterGigsByStartTimeCustom(
+          filteredResult,
+          customFilters.timeInterval
+        );
+      }
 
+      // Apply genre filter only if genres are selected
       if (customFilters.genres.length > 0) {
         filteredResult = filterGigsByGenre(filteredResult, customFilters.genres);
       }
     } else {
+      // Existing code for non-custom filters (Near Me, Starting Soon)
       if (isNearMeActive && userLatitude !== undefined && userLongitude !== undefined) {
         filteredResult = filterGigsByProximityCustom(filteredResult, userLatitude, userLongitude, 1);
       }
@@ -147,6 +150,8 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
     filterByProximity, 
     filterByStartTime, 
     applyCustomFilters,
-    resetFilter
+    resetFilter,
+    isNearMeActive,
+    isStartingSoonActive
   };
 };

@@ -41,6 +41,7 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
   const [isPanelVisible, setIsPanelVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState(null);
+  const [customFiltersApplied, setCustomFiltersApplied] = useState(false);
   const {user} = useContext(AuthContext) || {}
   const userDetails = useGetUser(user?.uid);
 
@@ -91,9 +92,22 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
         applyCustomFilters(appliedFilters);
       }
     }, [appliedFilters, applyCustomFilters]);
+
+    const handleFilterButtonPress = () => {
+      if (customFiltersApplied) {
+        // Clear filters
+        resetFilter();
+        setCustomFiltersApplied(false);
+      } else {
+        // Open modal
+        setModalVisible(true);
+      }
+    };
   
     const handleApplyFilters = (filters) => {
-      setAppliedFilters(filters);
+      applyCustomFilters(filters);
+      setCustomFiltersApplied(true);
+      setModalVisible(false);
     };
   
 
@@ -166,7 +180,8 @@ const renderMarker = (data) => {
             address: primaryGig.address,
             links: primaryGig.links,
             gigName_subHeader: primaryGig.gigName_subHeader,
-            id: primaryGig.id
+            id: primaryGig.id,
+            genreTags: primaryGig.genreTags
           });
         }}
       >
@@ -219,7 +234,8 @@ const renderMarker = (data) => {
                     address: gig.address,
                     links: gig.links,
                     gigName_subHeader: gig.gigName_subHeader,
-                    id: gig.id                 
+                    id: gig.id,
+                    genreTags: gig.genreTags                
                   });
                 }}>
                   <View style = {{backgroundColor:'#377D8A',borderRadius:4,marginBottom:'5%',padding: '2%',width:'auto'}}>
@@ -308,9 +324,9 @@ const renderMarker = (data) => {
         <View style={styles.overlay_header}>
           <Image
             source={require("../assets/Icon_White_48x48_new.png")}
-            style={{ width: 12, height: 28,marginBottom:4 }}
+            style={{ width: 12, height: 28, marginBottom: 4 }}
           />
-          <TouchableOpacity style = {styles.overlay_button}>
+          <TouchableOpacity style={styles.overlay_button}>
             <Text style={styles.overlay_button_text}>Today, 22nd August  </Text>
             <AntDesign name="caretdown" size={16} color="white" />
           </TouchableOpacity>
@@ -318,19 +334,19 @@ const renderMarker = (data) => {
         </View>
         <View style={styles.overlay_buttons}>
           <View style={styles.overlay_buttons_filters}>
-          <TouchableOpacity 
-            style={[
-              styles.overlay_buttons_filters_button,
-              isNearMeActive && styles.overlay_buttons_filters_button_active
-            ]}
-            onPress={handleNearMePress}
-          >
-            <View style={styles.overlay_buttons_filters_button_details}>
-              <Feather name="map-pin" size={12} color="white" />
-              <Text style={styles.overlay_buttons_filters_button_text}> Near me</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity 
+            <TouchableOpacity
+              style={[
+                styles.overlay_buttons_filters_button,
+                isNearMeActive && styles.overlay_buttons_filters_button_active
+              ]}
+              onPress={handleNearMePress}
+            >
+              <View style={styles.overlay_buttons_filters_button_details}>
+                <Feather name="map-pin" size={12} color="white" />
+                <Text style={styles.overlay_buttons_filters_button_text}> Near me</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
               style={[
                 styles.overlay_buttons_filters_button,
                 isStartingSoonActive && styles.overlay_buttons_filters_button_active
@@ -342,14 +358,19 @@ const renderMarker = (data) => {
                 <Text style={styles.overlay_buttons_filters_button_text}> Starting soon</Text>
               </View>
             </TouchableOpacity>
-      <TouchableOpacity onPress={openModal} style={styles.button}>
-        <Text>Open Modal</Text>
-      </TouchableOpacity>
-      <CustomModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onApply={handleApplyFilters}
-      />
+            <TouchableOpacity onPress={handleFilterButtonPress} style={styles.overlay_buttons_filters_button}>
+              <View style={styles.overlay_buttons_filters_button_details}>
+                <Feather name="sliders" size={12} color="white" />
+                <Text style={styles.overlay_buttons_filters_button_text}>
+                   {customFiltersApplied ? " Clear Filters" : " Custom Filters"}
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <CustomModal
+              visible={modalVisible}
+              onClose={() => setModalVisible(false)}
+              onApply={handleApplyFilters}
+            />
           </View>
         </View>
       </View>

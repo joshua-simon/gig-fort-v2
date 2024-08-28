@@ -328,7 +328,7 @@ const renderMarker = (data) => {
           />
           <TouchableOpacity style={styles.overlay_button}>
             <Text style={styles.overlay_button_text}>Today, 22nd August  </Text>
-            <AntDesign name="caretdown" size={16} color="white" />
+            <AntDesign name="caretdown" size={14} color="white" />
           </TouchableOpacity>
           <Feather name="menu" size={24} color="white" style={{ paddingTop: "5%" }} />
         </View>
@@ -358,7 +358,13 @@ const renderMarker = (data) => {
                 <Text style={styles.overlay_buttons_filters_button_text}> Starting soon</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleFilterButtonPress} style={styles.overlay_buttons_filters_button}>
+            <TouchableOpacity 
+              onPress={handleFilterButtonPress} 
+              style={[
+                styles.overlay_buttons_filters_button,
+                customFiltersApplied && styles.activeFilterButton
+              ]}
+            >
               <View style={styles.overlay_buttons_filters_button_details}>
                 <Feather name="sliders" size={12} color="white" />
                 <Text style={styles.overlay_buttons_filters_button_text}>
@@ -392,12 +398,12 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 75, 
+    height: 80, 
     zIndex: 1000,
-    backgroundColor:'rgba(62, 81, 95, 0.7)'
+    backgroundColor:'rgba(55, 125, 138, 0.7)'
   },
   overlay_header: {
-    height:'90%',
+    height:'85%',
     flexDirection:'row',
     justifyContent: 'space-between',
     alignItems:'flex-end',
@@ -429,7 +435,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly"
   },
   overlay_buttons_filters_button:{
-    backgroundColor:'rgba(84, 96, 104, 0.9)',
+    backgroundColor:'rgba(55, 125, 138, 0.9)',
     // borderWidth: 1,
     // borderColor: 'white',
     padding: 6,
@@ -454,6 +460,9 @@ const styles = StyleSheet.create({
   },
   overlay_buttons_filters_button_active: {
     backgroundColor: '#2596be', 
+  },
+  activeFilterButton: {
+    backgroundColor: '#00AFDD',
   },
   modalContent: {
     flex: 1,

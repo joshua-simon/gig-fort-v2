@@ -24,6 +24,7 @@ import { useGetUser } from "../hooks/useGetUser";
 import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import CustomModal from "./CustomModal";
+import MenuModal from "./MenuModal";
 // import CustomCallout from "./CustomCallout";
 
 
@@ -38,15 +39,17 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [ gigs, setGigs ] = useState([])
-  const [isPanelVisible, setIsPanelVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [isPanelVisible, setIsPanelVisible] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState(null);
+  const [ menuModalVisible, setMenuModalVisible ] = useState(false)
   const [customFiltersApplied, setCustomFiltersApplied] = useState(false);
   const {user} = useContext(AuthContext) || {}
   const userDetails = useGetUser(user?.uid);
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
+
 
     //This hook retrieves user's location
     useEffect(() => {
@@ -74,7 +77,6 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
       isNearMeActive,
       isStartingSoonActive
     } = useGigs({
-      userCity: userDetails?.userLocation,
       userLatitude: location?.coords.latitude,
       userLongitude: location?.coords.longitude,
     });
@@ -109,6 +111,10 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
       setCustomFiltersApplied(true);
       setModalVisible(false);
     };
+
+    const handleMenuModal = () => {
+      setMenuModalVisible(true)
+    }
   
 
   useEffect(() => {
@@ -330,7 +336,11 @@ const renderMarker = (data) => {
             <Text style={styles.overlay_button_text}>Today, 22nd August  </Text>
             <AntDesign name="caretdown" size={14} color="white" />
           </TouchableOpacity>
-          <Feather name="menu" size={24} color="white" style={{ paddingTop: "5%" }} />
+          <TouchableOpacity
+            onPress = {handleMenuModal}
+          >
+            <Feather name="menu" size={24} color="white" style={{ paddingTop: "5%" }} />
+          </TouchableOpacity>
         </View>
         <View style={styles.overlay_buttons}>
           <View style={styles.overlay_buttons_filters}>
@@ -376,6 +386,10 @@ const renderMarker = (data) => {
               visible={modalVisible}
               onClose={() => setModalVisible(false)}
               onApply={handleApplyFilters}
+            />
+            <MenuModal
+              visible = {menuModalVisible}
+              onClose = {() => setMenuModalVisible(false)}
             />
           </View>
         </View>

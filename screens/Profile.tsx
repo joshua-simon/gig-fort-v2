@@ -23,7 +23,7 @@ const Profile:FC<Props> = ({ navigation }) => {
 
   const { user } = useContext(AuthContext);
   const userDetails = useGetUser(user?.uid);
-  const { firstName, lastName, userLocation } = userDetails || {};
+  const { firstName, lastName } = userDetails || {};
 
   useFocusEffect(
     useCallback(() => {
@@ -37,77 +37,78 @@ const Profile:FC<Props> = ({ navigation }) => {
   const gigs = useGigs();
 
 
-  useEffect(() => {
-    if (user) {
-      const userRef = doc(db, 'users', user?.uid);
-      const unsubscribeUser = onSnapshot(userRef, (userSnapshot) => {
-      const userData = userSnapshot.data();
+//   useEffect(() => {
+//     if (user) {
+//       const userRef = doc(db, 'users', user?.uid);
+//       const unsubscribeUser = onSnapshot(userRef, (userSnapshot) => {
+//       const userData = userSnapshot.data();
         
-        if (userData) {
-          setUserSavedGigs(userSnapshot.data().savedGigs || []);
-        }
-      });
+//         if (userData) {
+//           setUserSavedGigs(userSnapshot.data().savedGigs || []);
+//         }
+//       });
   
-      return () => {
-        unsubscribeUser();
-      };
-    }
-}, [user]);
+//       return () => {
+//         unsubscribeUser();
+//       };
+//     }
+// }, [user]);
 
 
-  const savedGigs = gigs.filter((gig) => userSavedGigs?.includes(gig.id));
+  // const savedGigs = gigs.filter((gig) => userSavedGigs?.includes(gig.id));
 
-  const savedGigsFromCurrentDate = savedGigs?.filter((gig) => {
-    const gigDate = gig.dateAndTime?.seconds * 1000;
-    return isToday(new Date(gigDate)) || isFuture(new Date(gigDate))
-  })
+  // const savedGigsFromCurrentDate = savedGigs?.filter((gig) => {
+  //   const gigDate = gig.dateAndTime?.seconds * 1000;
+  //   return isToday(new Date(gigDate)) || isFuture(new Date(gigDate))
+  // })
 
 
 
-  const gigList =
-    savedGigsFromCurrentDate?.length === 0 ? (
-      <View style={{ alignItems: "center" }}>
-        <Image
-          source={require("../assets/logo_light_5.png")}
-          style={{ width: 184, height: 184 }}
-        />
-        <Text
-          style={{ fontFamily: "NunitoSans", fontSize: 16, marginTop: "2%" }}
-        >
-          You haven't saved any gigs yet!
-        </Text>
-      </View>
-    ) : (
-      <FlatList
-        data={savedGigsFromCurrentDate}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingBottom: 140 }}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.gigCard}
-            onPress={() =>
-              navigation.navigate("GigDetails", {
-                venue: item.venue,
-                gigName: item.gigName,
-                blurb: item.blurb,
-                isFree: item.isFree,
-                image: item.image,
-                genre: item.genre,
-                dateAndTime: { ...item.dateAndTime },
-                tickets: item.tickets,
-                ticketPrice: item.ticketPrice,
-                address: item.address,
-                links: item.links,
-                gigName_subHeader: item.gigName_subHeader,
-                id: item.id,
-              })
-            }
-          >
-            <GigCard item={item} isProfile={true} />
-          </TouchableOpacity>
-        )}
-      />
-    );
+  // const gigList =
+  //   savedGigsFromCurrentDate?.length === 0 ? (
+  //     <View style={{ alignItems: "center" }}>
+  //       <Image
+  //         source={require("../assets/logo_light_5.png")}
+  //         style={{ width: 184, height: 184 }}
+  //       />
+  //       <Text
+  //         style={{ fontFamily: "NunitoSans", fontSize: 16, marginTop: "2%" }}
+  //       >
+  //         You haven't saved any gigs yet!
+  //       </Text>
+  //     </View>
+  //   ) : (
+  //     <FlatList
+  //       data={savedGigsFromCurrentDate}
+  //       keyExtractor={(item) => item.id}
+  //       contentContainerStyle={{ paddingBottom: 140 }}
+  //       renderItem={({ item }) => (
+  //         <TouchableOpacity
+  //           style={styles.gigCard}
+  //           onPress={() =>
+  //             navigation.navigate("GigDetails", {
+  //               venue: item.venue,
+  //               gigName: item.gigName,
+  //               blurb: item.blurb,
+  //               isFree: item.isFree,
+  //               image: item.image,
+  //               genre: item.genre,
+  //               dateAndTime: { ...item.dateAndTime },
+  //               tickets: item.tickets,
+  //               ticketPrice: item.ticketPrice,
+  //               address: item.address,
+  //               links: item.links,
+  //               gigName_subHeader: item.gigName_subHeader,
+  //               id: item.id,
+  //               genreTags: item.genreTags
+  //             })
+  //           }
+  //         >
+  //           <GigCard item={item} isProfile={true} />
+  //         </TouchableOpacity>
+  //       )}
+  //     />
+  //   );
 
 
   return (
@@ -115,13 +116,12 @@ const Profile:FC<Props> = ({ navigation }) => {
     <View style={styles.contentContainer}>
       <View style = {styles.details}>
         <Text style={styles.username}>{firstName && lastName ? `${firstName} ${lastName}` : ''}</Text>
-        <Text style = {styles.location}>{userLocation ? userLocation : ''}</Text>
       </View>
       <View style = {styles.savedGigs}>
         <Text style={styles.savedGigs_header}>Saved gigs</Text>
-        <View style = {savedGigsFromCurrentDate?.length === 0 ? {marginTop:'20%'} :{marginTop:'10%'} }>
+        {/* <View style = {savedGigsFromCurrentDate?.length === 0 ? {marginTop:'20%'} :{marginTop:'10%'} }>
           {gigList}
-        </View>
+        </View> */}
       </View>
     </View>
     <Footer navigation = {navigation}/>

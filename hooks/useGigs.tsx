@@ -17,12 +17,11 @@ interface UseGigsResult {
 }
 
 interface UseGigsParams {
-  userCity?: string;
   userLatitude?: number;
   userLongitude?: number;
 }
 
-export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams): UseGigsResult => {
+export const useGigs = (params?: UseGigsParams): UseGigsResult => {
   const [allGigs, setAllGigs] = useState<GigObject[]>([]);
   const [filteredGigs, setFilteredGigs] = useState<GigObject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,14 +30,12 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
   const [isStartingSoonActive, setIsStartingSoonActive] = useState(false);
   const [customFilters, setCustomFilters] = useState<CustomFilters | null>(null);
 
-  useEffect(() => {
-    let gigQuery;
+  const userLatitude = params?.userLatitude;
+  const userLongitude = params?.userLongitude;
 
-    if (userCity && userCity.trim() !== "") {
-      gigQuery = query(collection(db, 'gigs'), where('city', '==', userCity));
-    } else {
-      gigQuery = collection(db, 'gigs');
-    }
+  useEffect(() => {
+    
+     const  gigQuery = collection(db, 'gigs');
 
     const unsubscribe = onSnapshot(gigQuery, (querySnapshot) => {
       const queriedGigs = querySnapshot.docs.map(doc => ({
@@ -71,7 +68,7 @@ export const useGigs = ({ userCity, userLatitude, userLongitude }: UseGigsParams
     });
 
     return () => unsubscribe();
-  }, [userCity]);
+  }, []);
 
   const applyFilters = useCallback((gigs: GigObject[]) => {
     let filteredResult = [...gigs];

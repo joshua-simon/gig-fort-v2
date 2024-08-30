@@ -12,6 +12,7 @@ import Login from "../screens/Login";
 import EditDetails from "../screens/EditDetails";
 import Header from "../components/Header";
 import HeaderProfile from "../components/HeaderProfile";
+import DeleteAccount from "../screens/DeleteAccount";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import About from "../screens/About";
 import { AuthContext } from "../AuthContext";
@@ -58,7 +59,8 @@ export type RootStackParamList = {
   Profile:undefined,
   Login:undefined,
   EditDetails:UserDetails,
-  Header:undefined
+  Header:undefined,
+  DeleteAccount:undefined
 }
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -66,10 +68,11 @@ const Stack = createStackNavigator<RootStackParamList>()
 export type listProps = NativeStackScreenProps<RootStackParamList, 'List', 'MyStack'>
 export type mapProps = NativeStackScreenProps<RootStackParamList, 'Map', 'MyStack'>
 export type gigDetailsProps = NativeStackScreenProps<RootStackParamList, 'GigDetails', 'MyStack'>
-// export type registerProps = NativeStackScreenProps<RootStackParamList, 'Register', 'MyStack'>
-// export type registrationSuccessProps = NativeStackScreenProps<RootStackParamList, 'RegistrationSuccess', 'MyStack'>
+export type registerProps = NativeStackScreenProps<RootStackParamList, 'Register', 'MyStack'>
+export type registrationSuccessProps = NativeStackScreenProps<RootStackParamList, 'RegistrationSuccess', 'MyStack'>
 export type profileProps = NativeStackScreenProps<RootStackParamList, 'Profile', 'MyStack'>
 export type loginProps = NativeStackScreenProps<RootStackParamList, 'Login', 'MyStack'>
+export type deleteAccountProps = NativeStackScreenProps<RootStackParamList, 'DeleteAccount', 'MyStack'>
 // export type editDetailsProps = NativeStackScreenProps<RootStackParamList, 'EditDetails', 'MyStack'>
 
 
@@ -175,6 +178,16 @@ export const MyStack = () => {
     <Stack.Screen 
     name="Login" 
     component={Login} 
+    options={{
+      title:'',
+      headerStyle:{
+        backgroundColor:'#F7F6F5'
+      },
+  }}
+      />
+    <Stack.Screen 
+    name="DeleteAccount" 
+    component={DeleteAccount} 
     options={{
       title:'',
       headerStyle:{

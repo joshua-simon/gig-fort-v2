@@ -25,6 +25,7 @@ import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import CustomModal from "./CustomModal";
 import MenuModal from "./MenuModal";
+import DatePicker from "./DatePicker";
 // import CustomCallout from "./CustomCallout";
 
 
@@ -44,6 +45,7 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
   const [appliedFilters, setAppliedFilters] = useState(null);
   const [ menuModalVisible, setMenuModalVisible ] = useState(false)
   const [customFiltersApplied, setCustomFiltersApplied] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const {user} = useContext(AuthContext) || {}
   const userDetails = useGetUser(user?.uid);
 
@@ -115,6 +117,19 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
     const handleMenuModal = () => {
       setMenuModalVisible(true)
     }
+
+    const formatDateForDisplay = (date: Date): string => {
+      if (isSameDay(date, new Date())) {
+        return `Today, ${format(date, 'do MMMM')}`;
+      }
+      return format(date, 'EEE do MMMM');
+    };
+  
+    const handleDateSelect = (date: Date) => {
+      setSelectedDate(date);
+      setDatePickerVisible(false);
+  
+    };
   
 
   useEffect(() => {
@@ -332,8 +347,11 @@ const renderMarker = (data) => {
             source={require("../assets/Icon_White_48x48_new.png")}
             style={{ width: 12, height: 28, marginBottom: 4 }}
           />
-          <TouchableOpacity style={styles.overlay_button}>
-            <Text style={styles.overlay_button_text}>Today, 22nd August  </Text>
+          <TouchableOpacity 
+          style={styles.overlay_button}
+          onPress={() => setDatePickerVisible(true)}
+          >
+            <Text style={styles.overlay_button_text}>{formatDateForDisplay(selectedDate)}{" "}</Text>
             <AntDesign name="caretdown" size={14} color="white" />
           </TouchableOpacity>
           <TouchableOpacity
@@ -393,6 +411,12 @@ const renderMarker = (data) => {
             />
           </View>
         </View>
+        <DatePicker
+        isVisible={isDatePickerVisible}
+        onClose={() => setDatePickerVisible(false)}
+        onDateSelect={handleDateSelect}
+        selectedDate={selectedDate}
+      />
       </View>
     </View>
   );

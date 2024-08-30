@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, PanResponder, TouchableOpacity, ScrollView, Modal, SafeAreaView, PanResponderGestureState } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
 
 interface CustomSliderProps {
   min: number;
@@ -11,16 +12,16 @@ interface CustomSliderProps {
 }
 
 interface CustomModalProps {
-    visible: boolean;
-    onClose: () => void;
-    onApply: (filters: CustomFilters) => void;
-  }
-  
-  interface CustomFilters {
-    distance: number;
-    timeInterval: number;
-    genres: string[];
-  }
+  visible: boolean;
+  onClose: () => void;
+  onApply: (filters: CustomFilters) => void;
+}
+
+interface CustomFilters {
+  distance: number;
+  timeInterval: number;
+  genres: string[];
+}
 
 const CustomSlider: React.FC<CustomSliderProps> = ({ min, max, step, value, onValueChange, unit }) => {
   const sliderWidth = 280;
@@ -108,11 +109,6 @@ const GenreSelector: React.FC<GenreSelectorProps> = ({ genres, selectedGenres, o
   );
 };
 
-interface CustomModalProps {
-  visible: boolean;
-  onClose: () => void;
-}
-
 const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose, onApply }) => {
   const [distance, setDistance] = useState<number>(0);
   const [timeInterval, setTimeInterval] = useState<number>(0);
@@ -140,7 +136,7 @@ const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose, onApply }) 
   return (
     <Modal
       animationType="slide"
-      transparent={false}
+      transparent={true}
       visible={visible}
       onRequestClose={onClose}
     >
@@ -150,7 +146,12 @@ const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose, onApply }) 
           scrollEventThrottle={16}
           scrollEnabled={true}
         >
-          <Text style={styles.title}>Custom filters</Text>
+          <View style = {styles.header}>
+            <Text style={styles.title}>Custom filters</Text>
+            <TouchableOpacity onPress={onClose}>
+              <AntDesign name="close" size={24} color="#000" />
+            </TouchableOpacity>
+          </View>
           <Text style={styles.subtitle}>Distance</Text>
           <CustomSlider
             min={0}
@@ -177,9 +178,6 @@ const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose, onApply }) 
           />
         </ScrollView>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={onClose} style={styles.button}>
-            <Text>Close</Text>
-          </TouchableOpacity>
           <TouchableOpacity onPress={handleApply} style={[styles.button, styles.applyButton]}>
             <Text style={styles.applyButtonText}>Apply</Text>
           </TouchableOpacity>
@@ -192,45 +190,56 @@ const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose, onApply }) 
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    justifyContent: 'flex-end',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent:'space-between',
   },
   scrollView: {
-    flex: 1,
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     padding: 20,
+    maxHeight: '80%',
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 20,
+    fontFamily: "NunitoSans",
+    color: '#333',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 10,
-    marginBottom: 5,
-    fontFamily: "NunitoSans"
+    marginTop: 15,
+    marginBottom: 10,
+    fontFamily: "NunitoSans",
+    color: '#333',
   },
   sliderContainer: {
     justifyContent: 'center',
-    width: 280,
+    width: '100%',
     alignSelf: 'center',
     height: 60,
+    padding:10
   },
   track: {
     height: 4,
     backgroundColor: '#ddd',
     borderRadius: 2,
-    width: 280,
+    width: '100%',
   },
   fill: {
     height: 4,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#377D8A',
     borderRadius: 2,
   },
   thumb: {
     width: 20,
     height: 20,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#377D8A',
     borderRadius: 10,
     position: 'absolute',
     top: -8,
@@ -240,6 +249,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     textAlign: 'center',
+    fontFamily: "LatoRegular",
+    color: '#666',
   },
   chipContainer: {
     flexDirection: 'row',
@@ -256,45 +267,44 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
   },
   selectedChip: {
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF',
+    backgroundColor: '#377D8A',
+    borderColor: '#377D8A',
   },
   genreText: {
     fontSize: 14,
     color: '#333',
+    fontFamily: "LatoRegular",
   },
   selectedText: {
     color: '#fff',
   },
-  exitButton: {
-    margin: 20,
-    padding: 10,
-    backgroundColor: '#DDDDDD',
-    borderRadius: 5,
-    alignItems: 'center',
-  },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    margin: 20,
+    padding: 20,
+    backgroundColor: 'white',
   },
   button: {
-    padding: 10,
-    backgroundColor: '#DDDDDD',
-    borderRadius: 5,
+    padding: 15,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10,
     alignItems: 'center',
     flex: 1,
     marginHorizontal: 5,
   },
+  buttonText: {
+    color: '#333',
+    fontSize: 16,
+    fontFamily: "NunitoSans",
+    fontWeight: 'bold',
+  },
   applyButton: {
-    padding: 10,
-    backgroundColor: '#007AFF',
-    borderRadius: 5,
-    alignItems: 'center',
+    backgroundColor: '#377D8A',
   },
   applyButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
+    fontFamily: "NunitoSans",
     fontWeight: 'bold',
   },
 });

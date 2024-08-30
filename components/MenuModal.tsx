@@ -1,28 +1,25 @@
-import { useState,useContext } from 'react';
+import { useState, useContext } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../routes/homeStack";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { auth } from "../firebase";
-import { signOut, deleteUser } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { AuthContext } from '../AuthContext';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import { AntDesign } from '@expo/vector-icons';
 
 interface SimpleModalProps {
   visible: boolean;
   onClose: () => void;
-  title: string;
-  content: string;
 }
 
 const MenuModal: React.FC<SimpleModalProps> = ({ visible, onClose }) => {
-
   const [loading, setLoading] = useState<boolean>(false);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, "Map">>();
-  const { user } = useContext(AuthContext)
+  const { user } = useContext(AuthContext);
 
   const signUserOut = () => {
-    setLoading(true); 
+    setLoading(true);
     signOut(auth)
       .then(() => {
         navigation.navigate("Map");
@@ -32,50 +29,38 @@ const MenuModal: React.FC<SimpleModalProps> = ({ visible, onClose }) => {
       })
       .finally(() => {
         setLoading(false);
-      })
+      });
   };
 
+  const renderButton = (title: string, onPress: () => void, isDestructive: boolean = false) => (
+    <TouchableOpacity
+      style={[styles.button, isDestructive && styles.destructiveButton]}
+      onPress={onPress}
+    >
+      <Text style={styles.buttonText}>{title}</Text>
+    </TouchableOpacity>
+  );
+
   const content = user ? (
-    <View>
-      <TouchableOpacity
-        onPress={signUserOut}
-      >
-        {loading ? (
-          <ActivityIndicator color="#000000" />
-        ) : (
-          <Text style={styles.modalTitle}>Sign out</Text>
-        )}
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          onClose()
-          navigation.navigate("DeleteAccount")
-        }}      
-      >
-        <Text style={styles.modalTitle}>Delete account</Text>
-      </TouchableOpacity>
+    <View style={styles.contentContainer}>
+      {renderButton(loading ? "Signing out..." : "Sign out", signUserOut)}
+      {renderButton("Delete account", () => {
+        onClose();
+        navigation.navigate("DeleteAccount");
+      }, true)}
     </View>
   ) : (
-    <View>
-      <TouchableOpacity
-        onPress={() => {
-          onClose()
-          navigation.navigate("Login")
-        }}
-      >
-        <Text style={styles.modalTitle}>Log in</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress = {() => {
-          onClose()
-          navigation.navigate("Register")
-        }}
-      >
-        <Text style={styles.modalTitle}>Register</Text>
-      </TouchableOpacity>
+    <View style={styles.contentContainer}>
+      {renderButton("Log in", () => {
+        onClose();
+        navigation.navigate("Login");
+      })}
+      {renderButton("Register", () => {
+        onClose();
+        navigation.navigate("Register");
+      })}
     </View>
-  )
-
+  );
 
   return (
     <Modal
@@ -86,10 +71,13 @@ const MenuModal: React.FC<SimpleModalProps> = ({ visible, onClose }) => {
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>Menu</Text>
+            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+              <AntDesign name="close" size={24} color="#000" />
+            </TouchableOpacity>
+          </View>
           {content}
-          <TouchableOpacity  onPress={onClose}>
-            <AntDesign name="closecircleo" size={20} color="grey" />
-          </TouchableOpacity>
         </View>
       </View>
     </Modal>
@@ -104,11 +92,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
-    margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
+    padding: 20,
+    width: '80%',
+    maxWidth: 400,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -118,26 +106,39 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  modalTitle: {
-    marginBottom: 15,
-    textAlign: 'center',
-    fontSize: 20,
-    fontWeight: 'bold',
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    fontFamily: 'NunitoSans',
+    color: '#000',
   },
   closeButton: {
-    backgroundColor: '#2196F3',
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
+    padding: 5,
   },
-  closeButtonText: {
+  contentContainer: {
+    alignItems: 'stretch',
+  },
+  button: {
+    backgroundColor: 'rgba(55, 125, 138, 0.7)',
+    borderRadius: 10,
+    padding: 15,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  destructiveButton: {
+    backgroundColor: '#D9534F',
+  },
+  buttonText: {
     color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontSize: 16,
+    fontFamily: 'NunitoSans',
+    fontWeight: '600',
   },
 });
 

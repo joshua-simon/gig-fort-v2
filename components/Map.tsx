@@ -6,7 +6,6 @@ import {
   Image,
   Platform,
   Dimensions,
-  Button,
   StatusBar,
   TouchableOpacity
 } from "react-native";
@@ -26,7 +25,6 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import CustomModal from "./CustomModal";
 import MenuModal from "./MenuModal";
 import DatePicker from "./DatePicker";
-// import CustomCallout from "./CustomCallout";
 
 
 type MapScreenNavgationProp = mapProps['navigation']
@@ -210,7 +208,7 @@ const renderMarker = (data) => {
         <View style={{ alignItems: 'center' }}>
           <Image style={styles.imageMain} source={require('../assets/map-pin-new.png')}/>
           <Text style={styles.markerText}>
-            {primaryGig.venue.length > 10 ? `${primaryGig.venue.substring(0, 10)}...` : primaryGig.venue}
+            {primaryGig.genre.length > 10 ? `${primaryGig.genre.substring(0, 10)}...` : primaryGig.genre}
           </Text>
         </View>
       </Marker>
@@ -348,35 +346,47 @@ const renderMarker = (data) => {
             source={require("../assets/Icon_White_48x48_new.png")}
             style={{ width: 12, height: 28, marginBottom: 4 }}
           />
-          <TouchableOpacity 
-          style={styles.overlay_button}
-          onPress={() => setDatePickerVisible(true)}
+          <TouchableOpacity
+            style={styles.overlay_button}
+            onPress={() => setDatePickerVisible(true)}
           >
             <Text style={styles.overlay_button_text}>{formatDateForDisplay(selectedDate)}{" "}</Text>
             <AntDesign name="caretdown" size={14} color="white" />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress = {handleMenuModal}
+            onPress={handleMenuModal}
           >
             <Feather name="menu" size={24} color="white" style={{ paddingTop: "5%" }} />
           </TouchableOpacity>
         </View>
         <View style={styles.overlay_buttons}>
           <View style={styles.overlay_buttons_filters}>
-          {hasLocationPermission && (
-            <TouchableOpacity
-              style={[
-                styles.overlay_buttons_filters_button,
-                isNearMeActive && styles.overlay_buttons_filters_button_active
-              ]}
-              onPress={handleNearMePress}
-            >
-              <View style={styles.overlay_buttons_filters_button_details}>
-                <Feather name="map-pin" size={12} color="white" />
-                <Text style={styles.overlay_buttons_filters_button_text}> Near me</Text>
-              </View>
-            </TouchableOpacity>
-          )}
+            {hasLocationPermission ? (
+              <TouchableOpacity
+                style={[
+                  styles.overlay_buttons_filters_button,
+                  isNearMeActive && styles.overlay_buttons_filters_button_active
+                ]}
+                onPress={handleNearMePress}
+              >
+                <View style={styles.overlay_buttons_filters_button_details}>
+                  <Feather name="map-pin" size={12} color="white" />
+                  <Text style={styles.overlay_buttons_filters_button_text}> Near me</Text>
+                </View>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={[
+                  styles.overlay_buttons_filters_button,
+                ]}
+                onPress={() => alert('Please allow Gig Fort access to your location in order to use distance-based filters')}
+              >
+                <View style={styles.overlay_buttons_filters_button_details}>
+                  <Feather name="map-pin" size={12} color="white" />
+                  <Text style={styles.overlay_buttons_filters_button_text}> Near me</Text>
+                </View>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               style={[
                 styles.overlay_buttons_filters_button,
@@ -389,8 +399,8 @@ const renderMarker = (data) => {
                 <Text style={styles.overlay_buttons_filters_button_text}> Starting soon</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity 
-              onPress={handleFilterButtonPress} 
+            <TouchableOpacity
+              onPress={handleFilterButtonPress}
               style={[
                 styles.overlay_buttons_filters_button,
                 customFiltersApplied && styles.activeFilterButton
@@ -399,7 +409,7 @@ const renderMarker = (data) => {
               <View style={styles.overlay_buttons_filters_button_details}>
                 <Feather name="sliders" size={12} color="white" />
                 <Text style={styles.overlay_buttons_filters_button_text}>
-                   {customFiltersApplied ? " Clear Filters" : " Custom Filters"}
+                  {customFiltersApplied ? " Clear Filters" : " Custom Filters"}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -407,20 +417,20 @@ const renderMarker = (data) => {
               visible={modalVisible}
               onClose={() => setModalVisible(false)}
               onApply={handleApplyFilters}
-              hasLocationPermission = {hasLocationPermission}
+              hasLocationPermission={hasLocationPermission}
             />
             <MenuModal
-              visible = {menuModalVisible}
-              onClose = {() => setMenuModalVisible(false)}
+              visible={menuModalVisible}
+              onClose={() => setMenuModalVisible(false)}
             />
           </View>
         </View>
         <DatePicker
-        isVisible={isDatePickerVisible}
-        onClose={() => setDatePickerVisible(false)}
-        onDateSelect={handleDateSelect}
-        selectedDate={selectedDate}
-      />
+          isVisible={isDatePickerVisible}
+          onClose={() => setDatePickerVisible(false)}
+          onDateSelect={handleDateSelect}
+          selectedDate={selectedDate}
+        />
       </View>
     </View>
   );

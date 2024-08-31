@@ -18,6 +18,7 @@ const MenuModal: React.FC<SimpleModalProps> = ({ visible, onClose }) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, "Map">>();
   const { user } = useContext(AuthContext);
 
+
   const signUserOut = () => {
     setLoading(true);
     signOut(auth)
@@ -43,6 +44,14 @@ const MenuModal: React.FC<SimpleModalProps> = ({ visible, onClose }) => {
 
   const content = user ? (
     <View style={styles.contentContainer}>
+      {renderButton("Edit details", () => {
+        onClose();
+        navigation.navigate("EditDetails", {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          UID: user.uid,
+        });
+      })}
       {renderButton(loading ? "Signing out..." : "Sign out", signUserOut)}
       {renderButton("Delete account", () => {
         onClose();

@@ -73,7 +73,7 @@ export type registrationSuccessProps = NativeStackScreenProps<RootStackParamList
 export type profileProps = NativeStackScreenProps<RootStackParamList, 'Profile', 'MyStack'>
 export type loginProps = NativeStackScreenProps<RootStackParamList, 'Login', 'MyStack'>
 export type deleteAccountProps = NativeStackScreenProps<RootStackParamList, 'DeleteAccount', 'MyStack'>
-// export type editDetailsProps = NativeStackScreenProps<RootStackParamList, 'EditDetails', 'MyStack'>
+export type editDetailsProps = NativeStackScreenProps<RootStackParamList, 'EditDetails', 'MyStack'>
 
 
 export const MyStack = () => {

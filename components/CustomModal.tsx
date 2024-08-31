@@ -15,6 +15,7 @@ interface CustomModalProps {
   visible: boolean;
   onClose: () => void;
   onApply: (filters: CustomFilters) => void;
+  hasLocationPermission: boolean;
 }
 
 interface CustomFilters {
@@ -109,7 +110,7 @@ const GenreSelector: React.FC<GenreSelectorProps> = ({ genres, selectedGenres, o
   );
 };
 
-const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose, onApply }) => {
+const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose, onApply, hasLocationPermission }) => {
   const [distance, setDistance] = useState<number>(0);
   const [timeInterval, setTimeInterval] = useState<number>(0);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -153,14 +154,31 @@ const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose, onApply }) 
             </TouchableOpacity>
           </View>
           <Text style={styles.subtitle}>Distance</Text>
-          <CustomSlider
-            min={0}
-            max={10}
-            step={0.1}
-            value={distance}
-            onValueChange={setDistance}
-            unit="km"
-          />
+          {hasLocationPermission ? (
+            <CustomSlider
+              min={0}
+              max={10}
+              step={0.1}
+              value={distance}
+              onValueChange={setDistance}
+              unit="km"
+            />
+          ) : (
+            <View style={styles.disabledSliderContainer}>
+              <CustomSlider
+                min={0}
+                max={10}
+                step={0.1}
+                value={distance}
+                onValueChange={() => {}}
+                unit="km"
+              />
+              <View style={styles.disabledOverlay} />
+              <Text style={styles.disabledText}>
+                Please give Gig Fort permission to use your location in order to utilize distance-based filters
+              </Text>
+            </View>
+          )}
           <Text style={styles.subtitle}>Time Interval</Text>
           <CustomSlider
             min={0}
@@ -306,6 +324,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "NunitoSans",
     fontWeight: 'bold',
+  },
+  disabledSliderContainer: {
+    position: 'relative',
+  },
+  disabledOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+  },
+  disabledText: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    color: '#000000',
+    fontSize: 12,
+    fontWeight: "bold",
+    fontFamily: "LatoRegular",
+    padding: 5,
   },
 });
 

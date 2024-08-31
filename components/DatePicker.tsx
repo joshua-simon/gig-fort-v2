@@ -9,7 +9,7 @@ interface DatePickerProps {
   selectedDate: Date;
 }
 
-const SCREEN_HEIGHT = Dimensions.get('window').height;
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const DatePicker: React.FC<DatePickerProps> = ({ isVisible, onClose, onDateSelect, selectedDate }) => {
   const [dateRange, setDateRange] = useState<Date[]>([]);
@@ -57,8 +57,8 @@ const DatePicker: React.FC<DatePickerProps> = ({ isVisible, onClose, onDateSelec
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Select Date</Text>
-          <TouchableOpacity onPress={onClose}>
-            <Text style={styles.closeButton}>Close</Text>
+          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
         </View>
         {dateRange.map((date) => (
@@ -100,9 +100,10 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     elevation: 5,
+    maxHeight: SCREEN_HEIGHT * 0.7,
   },
   content: {
     paddingBottom: 20,
@@ -111,22 +112,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 15,
+    padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
   headerText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    fontFamily: 'NunitoSans'
+    fontSize: 24,
+    fontWeight: '700',
+    fontFamily: 'NunitoSans',
+    color: '#333',
   },
   closeButton: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: '#377D8A',
+  },
+  closeButtonText: {
     fontSize: 16,
-    color: '#377D8A',
-    fontFamily: 'NunitoSans'
+    color: 'white',
+    fontFamily: 'NunitoSans',
+    fontWeight: '600',
   },
   dateItem: {
-    padding: 15,
+    padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
@@ -134,11 +142,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#e6f3f5',
   },
   dateText: {
-    fontSize: 16,
-    fontFamily: 'LatoRegular'
+    fontSize: 18,
+    fontFamily: 'LatoRegular',
+    color: '#333',
   },
   selectedDateText: {
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#377D8A',
   },
 });

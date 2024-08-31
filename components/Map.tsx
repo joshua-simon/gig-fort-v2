@@ -46,6 +46,7 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
   const [ menuModalVisible, setMenuModalVisible ] = useState(false)
   const [customFiltersApplied, setCustomFiltersApplied] = useState(false);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const [hasLocationPermission, setHasLocationPermission] = useState(false);
   const {user} = useContext(AuthContext) || {}
   const userDetails = useGetUser(user?.uid);
 
@@ -56,15 +57,15 @@ const GigMap:FC<Props> = ({ navigation }):JSX.Element => {
     //This hook retrieves user's location
     useEffect(() => {
       (async () => {
-        
         let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
+        if (status === 'granted') {
+          setHasLocationPermission(true);
+          let location = await Location.getCurrentPositionAsync({});
+          setLocation(location);
+        } else {
           setErrorMsg('Permission to access location was denied');
-          return;
+          setHasLocationPermission(false);
         }
-  
-        let location = await Location.getCurrentPositionAsync({});
-        setLocation(location);
       })();
     }, []);
 
@@ -362,6 +363,7 @@ const renderMarker = (data) => {
         </View>
         <View style={styles.overlay_buttons}>
           <View style={styles.overlay_buttons_filters}>
+          {hasLocationPermission && (
             <TouchableOpacity
               style={[
                 styles.overlay_buttons_filters_button,
@@ -374,6 +376,7 @@ const renderMarker = (data) => {
                 <Text style={styles.overlay_buttons_filters_button_text}> Near me</Text>
               </View>
             </TouchableOpacity>
+          )}
             <TouchableOpacity
               style={[
                 styles.overlay_buttons_filters_button,
@@ -404,6 +407,7 @@ const renderMarker = (data) => {
               visible={modalVisible}
               onClose={() => setModalVisible(false)}
               onApply={handleApplyFilters}
+              hasLocationPermission = {hasLocationPermission}
             />
             <MenuModal
               visible = {menuModalVisible}

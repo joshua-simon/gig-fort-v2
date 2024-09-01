@@ -104,7 +104,7 @@ export const MyStack = () => {
         title: '',
         headerTintColor:'#2596be',
         headerStyle:{
-          backgroundColor:'#F7F6F5'
+          backgroundColor:'#E8E7E6'
         }
     }}
       />

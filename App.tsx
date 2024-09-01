@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { MyStack } from './routes/homeStack';
 import { useFonts } from 'expo-font';
-// import * as SplashScreen from 'expo-splash-screen'
+import * as SplashScreen from 'expo-splash-screen'
 import { AuthProvider } from './AuthContext';
 import { MenuProvider } from 'react-native-popup-menu';
 // import { LocationProvider } from './LocationContext';
@@ -15,15 +15,15 @@ export default function App() {
     'LatoRegular': require('./assets/Lato-Regular.ttf')
   })
 
-  // const onLayoutRootView = useCallback(async () => {
-  //   if (fontsLoaded) {
-  //     await SplashScreen.hideAsync();
-  //   }
-  // }, [fontsLoaded]);
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
 
-  // if (!fontsLoaded) {
-  //   return null;
-  // }
+  if (!fontsLoaded) {
+    return null;
+  }
   
   return (
     <MenuProvider>

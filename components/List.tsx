@@ -31,7 +31,7 @@ const ListByDay: FC<Props> = ({ navigation }): JSX.Element => {
 
 //   const locationToUse = user && userDetails?.userLocation ? userDetails.userLocation : selectedLocation;
 
-  const gigsDataFromHook = useGigs();
+const { gigsDataFromHook, isLoading, error } = useGigs();
 
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const ListByDay: FC<Props> = ({ navigation }): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
-      StatusBar.setBackgroundColor('#F7F6F5');
+      StatusBar.setBackgroundColor('#E8E7E6');
       return () => {};  // optional cleanup 
     }, [])
   );
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   selected: {
     padding: 8,
-    backgroundColor:'#F7F6F5',
+    backgroundColor:'#E8E7E6',
     borderRadius:8,
     marginRight:'20%',
   },

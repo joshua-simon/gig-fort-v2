@@ -63,7 +63,14 @@ const GigCardContent:FC<GigCardContentProps> = ({
           0,
           60
         )}...`}</Text>
-        <TouchableOpacity
+      </View>
+      <View style = {styles.recommendations_container}>
+        <View style={styles.recommendations}>
+          <Text style={styles.recommendations_text}>{`  ${likes} ${
+            likes == 1 ? "person has" : "people have"
+          } liked this gig`}</Text>
+        </View>
+      <TouchableOpacity
           onPress={() => {
             try {
               navigation.navigate("GigDetails", {
@@ -89,11 +96,6 @@ const GigCardContent:FC<GigCardContentProps> = ({
         >
           <Text style={styles.seeMore}>See more {`>`}</Text>
         </TouchableOpacity>
-      </View>
-      <View style={styles.recommendations}>
-        <Text style={styles.recommendations_text}>{`  ${likes} ${
-          likes == 1 ? "person has" : "people have"
-        } liked this gig`}</Text>
       </View>
     {user ? (
             <View style={styles.saveAndNotificationButtons}>
@@ -235,8 +237,13 @@ const styles = StyleSheet.create({
   recommendations_text: {
     fontFamily: "LatoRegular",
     color: "#747474",
-    marginTop: "2%",
-    marginBottom: "1%",
+    // marginTop: "2%",
+    // marginBottom: "1%",
+  },
+  recommendations_container: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: "1%"
   },
   saveAndNotificationButtons: {
     flexDirection: "row",

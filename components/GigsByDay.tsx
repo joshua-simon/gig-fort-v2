@@ -21,7 +21,7 @@ const GigsByDay:FC<Props> = ({ gigsFromSelectedDate, navigation }):JSX.Element =
         <View
         style={styles.gigCard}
         >
-        <GigCard item = {item} isProfile={false} navigation = {navigation}/>
+        <GigCard item = {item} navigation = {navigation}/>
       </View>
     )}
   />

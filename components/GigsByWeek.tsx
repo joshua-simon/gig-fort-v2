@@ -62,7 +62,7 @@ const GigsByWeek: FC<Props> = ({
 
             {gigsThisWeek_grouped[item].map((val: GigObject, i: number) => (
               <View style={styles.gigCard} key={val.id}>
-                <GigCard item={val} navigation={navigation} isProfile={false} />
+                <GigCard item={val} navigation={navigation} />
               </View>
             ))}
           </View>

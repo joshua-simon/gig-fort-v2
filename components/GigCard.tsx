@@ -17,11 +17,10 @@ import GigCardProfile from "./GigCardContent";
 
 interface Props {
   item: GigObject ;
-  isProfile?: boolean;
   navigation?: any;
 }
 
-const GigCard:FC<Props> = ({ item, isProfile, navigation }) => {
+const GigCard:FC<Props> = ({ item, navigation }) => {
 
 
   const dateInSeconds = item?.dateAndTime?.seconds || 0;
@@ -58,7 +57,6 @@ const GigCard:FC<Props> = ({ item, isProfile, navigation }) => {
     toggleSaveGig={toggleSaveGig} 
     isGigSaved={isGigSaved}
     navigation = {navigation}
-    isProfile = {isProfile}
     user = {user}
     likes = {likes}
     isGigLiked = {isGigLiked}

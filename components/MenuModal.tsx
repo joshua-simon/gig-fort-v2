@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
   },
   button: {
-    backgroundColor: 'rgba(55, 125, 138, 0.7)',
+    backgroundColor: '#377D8A',
     borderRadius: 10,
     padding: 15,
     alignItems: 'center',

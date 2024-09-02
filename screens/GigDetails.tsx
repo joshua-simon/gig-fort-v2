@@ -64,7 +64,7 @@ const GigDetails: FC<Props> = ({ route }): JSX.Element => {
   const defaultDate = format(new Date(),"EEE LLL do y");
   const date: string = dateAndTime?.seconds ? format(
     new Date(dateAndTime?.seconds * 1000),
-    "EEE LLL do Y"
+    "EEE LLL do y"
   ) : defaultDate
 
   const defaultTime = format(new Date(),"h:mm a");

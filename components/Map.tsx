@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 80, 
+    height: 85, 
     zIndex: 1000,
     backgroundColor:'rgba(55, 125, 138, 0.7)'
   },
@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15
   },
   overlay_buttons:{
-    marginTop: "-5%",
+    marginTop: "-2%",
     position: 'absolute',
     top: 80, // Position it right below the header
     left: 0,

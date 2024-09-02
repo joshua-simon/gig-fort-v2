@@ -9,7 +9,6 @@ interface GigCardContentProps {
   dayOfMonth: number;
   monthName: string;
   navigation?: any;
-  isProfile?: boolean;
   user:any;
   toggleSaveGig:any;
   isGigSaved:any;
@@ -25,7 +24,6 @@ const GigCardContent:FC<GigCardContentProps> = ({
   toggleSaveGig,
   isGigSaved,
   navigation,
-  isProfile,
   user,
   likes,
   isGigLiked,
@@ -39,7 +37,7 @@ const GigCardContent:FC<GigCardContentProps> = ({
 
   const gigFortLogoURL = 'https://play-lh.googleusercontent.com/bTmOoSUdABDQ2rAa80DPOgyHbZH-4YVoIbDtuJfEK47Tfjx3WutZ9RcUiP8jKugxtXKO=w240-h480-rw'
 
-  const content = !isProfile ? (
+  const content =  
     <View style={styles.gigCard_items}>
       <View style = {{flexDirection:'row',justifyContent:'space-between'}}>
         <View style = {{flexDirection:'column'}}>
@@ -124,43 +122,11 @@ const GigCardContent:FC<GigCardContentProps> = ({
                 Save
               </Text>
             </View>
-    
           </View>
     ) : (
       <ButtonBar/>
     )}
-
     </View>
-  ) : (
-    <View style={styles.gigCard_items}>
-    <View style = {{flexDirection:'row',justifyContent:'space-between'}}>
-      <View style = {{flexDirection:'column'}}>
-        <Text style={styles.gigCard_header}>{gigTitle.length > 20 ? `${gigTitle.substring(0,19)}...` : gigTitle }</Text>
-
-        <View style={styles.venueDetails}>
-          <Ionicons name="location-outline" size={14} color="black" />
-          <Text style={styles.gigCard_details}>
-            {item?.venue} | {item?.genre.length > 15 ? `${item?.genre.substring(0, 14)}...` : item?.genre}
-          </Text>
-        </View>
-      </View>
-
-        <View style = {styles.dateBox}>
-          <Text style = {styles.dateBox_day}>{dayOfMonth}</Text>
-          <Text style = {styles.dateBox_month}>{monthName}</Text>
-        </View>
-
-    </View>
-    <Text style={styles.seeMore}>See more {`>`}</Text>
-    <TouchableOpacity onPress={() => toggleSaveGig(item?.id)}>
-      {isGigSaved ? (
-        <FontAwesome name="bookmark" size={24} color="#377D8A" />
-      ) : (
-        <FontAwesome name="bookmark-o" size={24} color="#377D8A" />
-      )}
-    </TouchableOpacity>
-  </View>
-  )
 
  return <View>{content}</View>
 

@@ -8,7 +8,6 @@ import { getGigsToday, getGigsThisWeek } from "../util/helperFunctions";
 import { format } from "date-fns";
 import { AuthContext } from "../AuthContext";
 import { useGetUser } from "../hooks/useGetUser";
-import { useLocation } from "../LocationContext";
 import { useFocusEffect } from '@react-navigation/native';
 import { GigObject } from "../routes/homeStack";
 
@@ -24,12 +23,9 @@ const ListByDay: FC<Props> = ({ navigation }): JSX.Element => {
   const [showWeek, setShowByWeek] = useState<boolean>(false);
   const [ gigs, setGigs ] = useState<GigObject[]>([])
   const currentDateMs: number = Date.now();
-//   const { selectedLocation, setSelectedLocation } = useLocation();
   const {user} = useContext(AuthContext) || {}
   const userDetails = useGetUser(user?.uid);
 
-
-//   const locationToUse = user && userDetails?.userLocation ? userDetails.userLocation : selectedLocation;
 
 const { gigsDataFromHook, isLoading, error } = useGigs();
 

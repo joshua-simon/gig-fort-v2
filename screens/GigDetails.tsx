@@ -37,8 +37,29 @@ const GigDetails: FC<Props> = ({ route }): JSX.Element => {
       }, [])
     );
 
+    console.log(ticketPrice)
+
 
   const free = isFree ? "|  Free Entry" : "";
+
+  const processSplitSentence = (splitSentence:string) => {
+
+    const lines = splitSentence.split('\n');
+    
+    const nonEmptyLines = [];
+
+    for (let line of lines) {
+
+      const trimmedLine = line.trim();
+      if (trimmedLine.length > 0) {
+        nonEmptyLines.push(trimmedLine);
+      }
+    }
+    
+    return nonEmptyLines.join(' ');
+  }
+
+  const formattedTicketPrice = processSplitSentence(ticketPrice)
 
   const isTicketed = tickets ? (
     <View style = {{borderRadius:26}}>
@@ -52,7 +73,7 @@ const GigDetails: FC<Props> = ({ route }): JSX.Element => {
   const isTicketPrice = !isFree ? (
     <View style={styles.text_icon}>
     <Entypo  name="ticket" size={15} color="#778899" />
-    <Text style={styles.details_text}>{ticketPrice}</Text>
+    <Text style={styles.details_text}>{formattedTicketPrice}</Text>
   </View>
   ) : (
     <View style={styles.text_icon}>
@@ -234,7 +255,7 @@ const styles = StyleSheet.create({
   text_icon: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom:'2%'
+    marginBottom:'2%',
   },
   subheader: {
     marginTop: 10,

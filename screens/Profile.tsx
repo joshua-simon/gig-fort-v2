@@ -100,7 +100,7 @@ const Profile:FC<Props> = ({ navigation }) => {
               })
             }
           >
-            <GigCard item={item} />
+            <GigCard item={item} navigation={navigation}/>
           </TouchableOpacity>
         )}
       />
@@ -115,7 +115,7 @@ const Profile:FC<Props> = ({ navigation }) => {
       </View>
       <View style = {styles.savedGigs}>
         <Text style={styles.savedGigs_header}>Saved gigs</Text>
-        <View style = {savedGigsFromCurrentDate?.length === 0 ? {marginTop:'20%'} :{marginTop:'10%'} }>
+        <View style = {savedGigsFromCurrentDate?.length === 0 ? {marginTop:'20%'} :{marginTop:'5%'} }>
           {gigList}
         </View>
       </View>
@@ -128,7 +128,7 @@ const Profile:FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F6F5',
+    backgroundColor: '#E8E7E6',
   },
   contentContainer:{
     flex: 1,
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   },
   details:{
     width:'98%',
-    height:115,
+    height:90,
     backgroundColor:'#4fb6da',
     marginVertical: 0,
     alignSelf: 'center',
@@ -181,7 +181,8 @@ const styles = StyleSheet.create({
     flexDirection:'column'
   },
   savedGigs: {
-    marginTop:'10%'
+    marginTop:'10%',
+    paddingBottom:'10%'
   },
   savedGigs_header: {
     color: "black",

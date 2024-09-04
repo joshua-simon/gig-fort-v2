@@ -78,7 +78,7 @@ const CustomSlider: React.FC<CustomSliderProps> = ({ min, max, step, value, onVa
 const formatTime = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+  return hours > 0 ? `${hours} hours ${mins} minutes` : `${mins} minutes`;
 };
 
 interface GenreSelectorProps {
@@ -114,7 +114,9 @@ const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose, onApply, ha
   const [distance, setDistance] = useState<number>(0);
   const [timeInterval, setTimeInterval] = useState<number>(0);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const genres: string[] = ["Jazz", "Funk", "Soul", "Neo Soul", "Latin", "Afro-Cuban"];
+  const genres: string[] = ["Jazz", "Funk", "Soul", "Neo Soul", "Latin", "Afro-Cuban", "Blues", "Metal", "Folk",
+    "Classical", "Indie", "Pop", "Electronic/Dance", "Hip Hop", "Brazilian", "Rock", "Balkan", "Reggae", "Alternative"
+  ];
 
   const toggleGenre = (genre: string) => {
     setSelectedGenres(prevSelected =>
@@ -179,7 +181,7 @@ const CustomModal: React.FC<CustomModalProps> = ({ visible, onClose, onApply, ha
               </Text>
             </View>
           )}
-          <Text style={styles.subtitle}>Time Interval</Text>
+          <Text style={styles.subtitle}>Starts in</Text>
           <CustomSlider
             min={0}
             max={60}
@@ -274,6 +276,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: 10,
+    paddingBottom: 20
   },
   genreChip: {
     backgroundColor: '#f0f0f0',

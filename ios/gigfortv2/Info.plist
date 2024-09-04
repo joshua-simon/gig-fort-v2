@@ -22,6 +22,8 @@
     <string>1.0.0</string>
     <key>CFBundleSignature</key>
     <string>????</string>
+    <key>GMSApiKey</key>
+    <string>AIzaSyD7q5ENGfNd9YM1nO6lRGG3CMOQMJHRc4Y</string>
     <key>CFBundleURLTypes</key>
     <array>
       <dict>

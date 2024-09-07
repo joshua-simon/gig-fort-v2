@@ -2,7 +2,7 @@
   "expo": {
     "name": "Gig Fort",
     "slug": "gig-fort-v2",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -21,7 +21,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.joshsimon.gigfortv2",
       "icon": "./assets/icon.png",
-      "buildNumber": "1.0.2",
+      "buildNumber": "1.0.3",
       "deploymentTarget": "13.4",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Allow Gig Fort to use your location.",
@@ -34,7 +34,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.gigfort.v2",
-      "versionCode": 3,
+      "versionCode": 5,
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"

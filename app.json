@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Gig Fort v2",
+    "name": "Gig Fort",
     "slug": "gig-fort-v2",
     "version": "1.0.2",
     "orientation": "portrait",
@@ -52,7 +52,7 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow Gig Fort v2 to use your location."
+          "locationAlwaysAndWhenInUsePermission": "Allow Gig Fort to use your location."
         }
       ]
     ],

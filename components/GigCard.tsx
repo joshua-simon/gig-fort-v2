@@ -45,7 +45,13 @@ const GigCard:FC<Props> = ({ item, navigation }) => {
     likes,
     toggleLiked,
     isGigLiked,
-    isPopupVisible
+    showReminderPopup,
+    hideReminderPopup,
+    cancelNotificationForGig,
+    isPopupVisible,
+    isReminderPopupVisible,
+    isNotified,
+    setNotification
   } = useGigData(item?.id, user?.uid);
 
 
@@ -61,6 +67,13 @@ const GigCard:FC<Props> = ({ item, navigation }) => {
     likes = {likes}
     isGigLiked = {isGigLiked}
     toggleLiked = {toggleLiked}
+    isNotified={isNotified}
+    showReminderPopup={showReminderPopup}
+    hideReminderPopup={hideReminderPopup}
+    cancelNotificationForGig={cancelNotificationForGig}
+    isPopupVisible={isPopupVisible}
+    isReminderPopupVisible={isReminderPopupVisible}
+    setNotification = {setNotification}
     />
   )
 };

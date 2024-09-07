@@ -2,6 +2,7 @@ import { FC } from 'react';
 import {View,Text,TouchableOpacity,StyleSheet,Image } from 'react-native'
 import { Ionicons, FontAwesome, AntDesign } from "@expo/vector-icons";
 import ButtonBar from './ButtonBar';
+import ReminderPopup from './ReminderPopup';
 import { GigObject } from '../routes/homeStack';
 
 interface GigCardContentProps {
@@ -15,6 +16,13 @@ interface GigCardContentProps {
   likes:any;
   isGigLiked: any;
   toggleLiked: any;
+  isNotified: any;
+  showReminderPopup: any;
+  hideReminderPopup: any;
+  isPopupVisible: any;
+  isReminderPopupVisible: any;
+  cancelNotificationForGig: any;
+  setNotification: any
 }
 
 const GigCardContent:FC<GigCardContentProps> = ({ 
@@ -28,7 +36,22 @@ const GigCardContent:FC<GigCardContentProps> = ({
   likes,
   isGigLiked,
   toggleLiked,
+  isNotified,
+  showReminderPopup,
+  hideReminderPopup,
+  isPopupVisible,
+  isReminderPopupVisible,
+  cancelNotificationForGig,
+  setNotification
 }) => {
+
+  const handleReminderPress = () => {
+    if (isNotified) {
+      cancelNotificationForGig();
+    } else {
+      showReminderPopup();
+    }
+  };
 
   const gigTitle =
   item?.gigName.length > 30
@@ -122,6 +145,27 @@ const GigCardContent:FC<GigCardContentProps> = ({
                 Save
               </Text>
             </View>
+
+            <View style={styles.saveAndNotificationButtons_button}>
+              <TouchableOpacity onPress={handleReminderPress}>
+                <Ionicons 
+                  name={isNotified ? "notifications-sharp" : "notifications-outline"} 
+                  size={24} 
+                  color="#377D8A" 
+                />
+              </TouchableOpacity>
+              <Text style={styles.saveAndNotificationButtons_button_text}>
+                {isNotified ? "Cancel Reminder" : "Remind me"}
+              </Text>
+          </View>
+          <ReminderPopup 
+            isVisible={isReminderPopupVisible}
+            onClose={hideReminderPopup}
+            onApply={(minutes) => {
+              setNotification(minutes);
+              hideReminderPopup();
+        }}
+      />
           </View>
     ) : (
       <ButtonBar/>

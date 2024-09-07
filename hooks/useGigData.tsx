@@ -1,53 +1,54 @@
 import { useState, useEffect } from 'react';
-import { doc, FirestoreError, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, FirestoreError, onSnapshot, arrayUnion, arrayRemove, updateDoc } from "firebase/firestore";
 import { db } from '../firebase';
 import {
     incrementLikesByOne,
     addLikedGigIDtoUser,
     removeSavedGig,
     addSavedGigs,
-    addUserIdToGig,
-    removeUserIdFromGig,
     decrementLikesByOne,
     removeLikedGigIDfromUser
 } from "./databaseFunctions";
+import { useNotifications } from './useNotifications';
 
-export const useGigData = (gigId:string, userId:string) => {
-
-
+export const useGigData = (gigId: string, userId: string) => {
     const [isGigSaved, setIsGigSaved] = useState(false);
     const [likes, setLikes] = useState(0);
-    const [notifications, setNotifications] = useState(false);
+    const [isNotified, setIsNotified] = useState(false);
     const [isGigLiked, setIsGigLiked] = useState(false);
     const [isPopupVisible, setPopupVisible] = useState(false);
     const [error, setError] = useState<FirestoreError | null>(null);
+    const [gigData, setGigData] = useState<any>(null);
+    const [isReminderPopupVisible, setIsReminderPopupVisible] = useState(false);
+
+    const { scheduleNotification, cancelNotification } = useNotifications();
 
     useEffect(() => {
-
-      if (!gigId) return;
+        if (!gigId) return;
 
         const gigRef = doc(db, "gigs", gigId);
     
         const unsubscribe = onSnapshot(gigRef, (gigSnapshot) => {
-          const gigData = gigSnapshot.data();
+          const data = gigSnapshot.data();
 
-          if (gigData) {
-            setLikes(gigData.likes || 0);
-            setNotifications(gigData.notifiedUsers ? gigData.notifiedUsers.includes(userId) : false);
+          if (data) {
+            setLikes(data.likes || 0);
+            setGigData(data);
           }
         }, (err) => {
           setError(err);
         });
     
-        let unsubscribeUser:any;
+        let unsubscribeUser: () => void;
         if (userId) {
           const userRef = doc(db, 'users', userId);
           unsubscribeUser = onSnapshot(userRef, (userSnapshot) => {
             const userData = userSnapshot.data();
             
             if (userData) {
-              setIsGigLiked(userData.likedGigs ? userData.likedGigs.includes(gigId) : false);
-              setIsGigSaved(userData.savedGigs ? userData.savedGigs.includes(gigId) : false);
+              setIsGigLiked(userData.likedGigs?.includes(gigId) ?? false);
+              setIsGigSaved(userData.savedGigs?.includes(gigId) ?? false);
+              setIsNotified(userData.notifiedGigs?.includes(gigId) ?? false);
             }
           }, (err: FirestoreError) => {
             setError(err);
@@ -62,44 +63,96 @@ export const useGigData = (gigId:string, userId:string) => {
         };
     }, [gigId, userId]);
 
-    const toggleSaveGig = (gigID: string) => {
-        if (isGigSaved) {
-          setIsGigSaved(false);
-          removeSavedGig(gigID, userId);
-        } else { 
-          setIsGigSaved(true);
-          addSavedGigs(gigID, userId);
+    const toggleSaveGig = async () => {
+        if (!userId) return;
+        try {
+            if (isGigSaved) {
+                await removeSavedGig(gigId, userId);
+            } else { 
+                await addSavedGigs(gigId, userId);
+            }
+            setIsGigSaved(!isGigSaved);
+        } catch (error) {
+            console.error("Error toggling save gig", error);
+            setError(error as FirestoreError);
         }
     };
     
-    const toggleLiked = (gigID: string) => {
-        setIsGigLiked(prevState => {
-          if (prevState) {
-            decrementLikesByOne(gigID);
-            removeLikedGigIDfromUser(gigID, userId);
-          } else {
-            incrementLikesByOne(gigID);
-            addLikedGigIDtoUser(gigID, userId);
-          }
-          return !prevState;
-        });
+    const toggleLiked = async () => {
+        if (!userId) return;
+        try {
+            if (isGigLiked) {
+                await decrementLikesByOne(gigId);
+                await removeLikedGigIDfromUser(gigId, userId);
+            } else {
+                await incrementLikesByOne(gigId);
+                await addLikedGigIDtoUser(gigId, userId);
+            }
+            setIsGigLiked(!isGigLiked);
+        } catch (error) {
+            console.error("Error toggling like", error);
+            setError(error as FirestoreError);
+        }
     };
 
     const showPopup = () => {
       setPopupVisible(true);
-
       setTimeout(() => {
         setPopupVisible(false);
       }, 3000);
     };
 
-    const toggleNotifications = (gigId: string) => {
-      if (notifications) {
-        removeUserIdFromGig(gigId, userId);
-      } else {
-        addUserIdToGig(gigId, userId);
-        showPopup()
-      }
+    const showReminderPopup = () => {
+        setIsReminderPopupVisible(true);
+    };
+
+    const hideReminderPopup = () => {
+        setIsReminderPopupVisible(false);
+    };
+
+    const setNotification = async (minutes: number) => {
+        if (!userId || !gigData) return;
+        const userRef = doc(db, "users", userId);
+        try {
+            await updateDoc(userRef, {
+                notifiedGigs: arrayUnion(gigId)
+            });
+            setIsNotified(true);
+            
+            if (gigData.dateAndTime) {
+                const notificationDate = new Date(gigData.dateAndTime.seconds * 1000);
+                notificationDate.setMinutes(notificationDate.getMinutes() - minutes);
+
+                await scheduleNotification(
+                    {
+                        title: `Upcoming Gig: ${gigData.gigName}`,
+                        body: `Don't forget! ${gigData.gigName} is starting in ${minutes} minutes at ${gigData.venue}`,
+                        data: { gigId }
+                    },
+                    { date: notificationDate }
+                );
+            }
+            
+            showPopup();
+        } catch (error) {
+            console.error("Error setting notification", error);
+            setError(error as FirestoreError);
+        }
+    };
+
+    const cancelNotificationForGig = async () => {
+        if (!userId) return;
+        const userRef = doc(db, "users", userId);
+        try {
+            await updateDoc(userRef, {
+                notifiedGigs: arrayRemove(gigId)
+            });
+            setIsNotified(false);
+            await cancelNotification(gigId);
+        } catch (error) {
+            console.error("Error cancelling notification", error);
+            setError(error as FirestoreError);
+        }
     };
 
     return {
@@ -107,9 +160,14 @@ export const useGigData = (gigId:string, userId:string) => {
         toggleSaveGig,
         likes,
         toggleLiked,
-        notifications,
-        toggleNotifications,
+        isNotified,
+        showReminderPopup,
+        hideReminderPopup,
+        setNotification,
+        cancelNotificationForGig,
         isGigLiked,
         isPopupVisible,
+        isReminderPopupVisible,
+        error
     }
 }

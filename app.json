@@ -20,11 +20,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.joshsimon.gigfortv2",
+      "icon": "./assets/icon.png",
       "buildNumber": "1.0.0",
       "deploymentTarget": "13.4",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Allow Gig Fort v2 to use your location.",
-        "NSLocationUsageDescription": "Allow Gig Fort v2 to use your location."
+        "NSLocationWhenInUseUsageDescription": "Allow Gig Fort to use your location.",
+        "NSLocationUsageDescription": "Allow Gig Fort to use your location."
       }
     },
     "android": {

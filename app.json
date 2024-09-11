@@ -21,7 +21,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.joshsimon.gigfortv2",
       "icon": "./assets/icon.png",
-      "buildNumber": "1.0.3",
+      "buildNumber": "1.0.15",
       "deploymentTarget": "13.4",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Allow Gig Fort to use your location.",
@@ -34,7 +34,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.gigfort.v2",
-      "versionCode": 5,
+      "versionCode": 16,
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"

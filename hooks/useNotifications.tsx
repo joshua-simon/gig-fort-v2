@@ -104,7 +104,7 @@ async function registerForPushNotificationsAsync(): Promise<string | undefined> 
     }
     
     if (Notifications.getExpoPushTokenAsync) {
-      const response = await Notifications.getExpoPushTokenAsync({ projectId: 'your-project-id' });
+      const response = await Notifications.getExpoPushTokenAsync({ projectId: "5ca9a291-45a7-41a0-84be-eeaee1902052" });
       token = response.data;
     } else {
       const response = await Notifications.getDevicePushTokenAsync();

@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler';
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { MyStack } from './routes/homeStack';
 import { useFonts } from 'expo-font';
@@ -8,6 +9,8 @@ import { AuthProvider } from './AuthContext';
 import { MenuProvider } from 'react-native-popup-menu';
 import * as Notifications from 'expo-notifications';
 
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -18,8 +21,31 @@ Notifications.setNotificationHandler({
 });
 
 export default function App() {
+  const [appIsReady, setAppIsReady] = useState(false);
+
+  const [fontsLoaded] = useFonts({
+    'NunitoSans': require('./assets/NunitoSans-Bold.ttf'),
+    'LatoRegular': require('./assets/Lato-Regular.ttf')
+  });
 
   useEffect(() => {
+    async function prepare() {
+      try {
+        // Pre-load fonts, make any API calls you need to do here
+        await Promise.all([
+          // Your existing font loading is handled by useFonts
+          // Add any other async operations here
+        ]);
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // Tell the application to render
+        setAppIsReady(true);
+      }
+    }
+
+    prepare();
+
     // Request permission for notifications (iOS)
     const requestPermissions = async () => {
       const { status } = await Notifications.requestPermissionsAsync();
@@ -50,30 +76,26 @@ export default function App() {
     };
   }, []);
 
-  const [ fontsLoaded ] = useFonts({
-    'NunitoSans': require('./assets/NunitoSans-Bold.ttf'),
-    'LatoRegular': require('./assets/Lato-Regular.ttf')
-  })
-
   const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
+    if (appIsReady && fontsLoaded) {
+      // This tells the splash screen to hide immediately
       await SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [appIsReady, fontsLoaded]);
 
-  if (!fontsLoaded) {
+  if (!appIsReady || !fontsLoaded) {
     return null;
   }
-  
+
   return (
-    <MenuProvider>
-      <AuthProvider>
-        <NavigationContainer>
-          <MyStack />
-        </NavigationContainer>
-      </AuthProvider>
-    </MenuProvider>
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+      <MenuProvider>
+        <AuthProvider>
+          <NavigationContainer>
+            <MyStack />
+          </NavigationContainer>
+        </AuthProvider>
+      </MenuProvider>
+    </View>
   );
 }
-
-

@@ -9,7 +9,7 @@ import { AuthProvider } from './AuthContext';
 import { MenuProvider } from 'react-native-popup-menu';
 import * as Notifications from 'expo-notifications';
 
-// Keep the splash screen visible while we fetch resources
+
 SplashScreen.preventAutoHideAsync();
 
 Notifications.setNotificationHandler({

@@ -21,7 +21,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.joshsimon.gigfortv2",
       "icon": "./assets/icon.png",
-      "buildNumber": "1.0.19",
+      "buildNumber": "1.0.20",
       "deploymentTarget": "13.4",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription":"Gig Fort uses your location to show your position on the map relative to nearby gigs and to enable distance-based filtering of events.",
@@ -34,7 +34,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.gigfort.v2",
-      "versionCode": 20,
+      "versionCode": 21,
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"

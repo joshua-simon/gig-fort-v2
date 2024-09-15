@@ -1,4 +1,4 @@
-package com.joshsimon.gigfortv2
+package com.gigfort.v2
 
 import android.os.Build
 import android.os.Bundle

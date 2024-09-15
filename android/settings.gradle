@@ -44,7 +44,7 @@ if (getRNMinorVersion() >= 75) {
   }
 }
 
-rootProject.name = 'gig-fort-v2'
+rootProject.name = 'Gig Fort'
 
 dependencyResolutionManagement {
   versionCatalogs {

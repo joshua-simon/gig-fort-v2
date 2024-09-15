@@ -109,13 +109,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.joshsimon.gigfortv2'
+    namespace 'com.gigfort.v2'
     defaultConfig {
-        applicationId 'com.joshsimon.gigfortv2'
+        applicationId 'com.gigfort.v2'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 21
+        versionName "1.0.3"
     }
     signingConfigs {
         debug {

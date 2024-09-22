@@ -114,8 +114,8 @@ android {
         applicationId 'com.gigfort.v2'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 21
-        versionName "1.0.3"
+        versionCode 23
+        versionName "1.0.6"
     }
     signingConfigs {
         debug {

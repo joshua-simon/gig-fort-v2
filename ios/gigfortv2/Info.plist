@@ -11,7 +11,7 @@
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
-    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <string>com.joshsimon.gigfortv2</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
@@ -19,7 +19,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.20</string>
+    <string>1.0.21</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>GMSApiKey</key>
@@ -40,7 +40,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>21</string>
+    <string>25</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSAppTransportSecurity</key>
@@ -57,7 +57,7 @@
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Gig Fort uses your location to show your position on the map relative to nearby gigs and to enable distance-based filtering of events.</string>
     <key>NSUserNotificationUsageDescription</key>
-    <string>"Gig Fort sends notifications to alert you about upcoming gigs you've marked"</string>
+    <string>Gig Fort sends notifications to alert you about upcoming gigs you've marked</string>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

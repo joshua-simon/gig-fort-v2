@@ -21,7 +21,13 @@ export const useGigData = (gigId: string, userId: string) => {
     const [gigData, setGigData] = useState<any>(null);
     const [isReminderPopupVisible, setIsReminderPopupVisible] = useState(false);
 
-    const { scheduleNotification, cancelNotification } = useNotifications();
+    const { scheduleNotification, cancelNotification, notificationError } = useNotifications();
+
+    useEffect(() => {
+        if (notificationError) {
+            console.error("Notification error:", notificationError);
+        }
+    }, [notificationError]);
 
     useEffect(() => {
         if (!gigId) return;
@@ -123,7 +129,7 @@ export const useGigData = (gigId: string, userId: string) => {
                 const notificationDate = new Date(gigData.dateAndTime.seconds * 1000);
                 notificationDate.setMinutes(notificationDate.getMinutes() - minutes);
 
-                await scheduleNotification(
+                const notificationId = await scheduleNotification(
                     {
                         title: `Upcoming Gig: ${gigData.gigName}`,
                         body: `Don't forget! ${gigData.gigName} is starting in ${minutes} minutes at ${gigData.venue}`,
@@ -131,6 +137,9 @@ export const useGigData = (gigId: string, userId: string) => {
                     },
                     { date: notificationDate }
                 );
+                
+                console.log("Notification scheduled with ID:", notificationId);
+                // Optionally, save this notificationId to the user's document in Firestore
             }
             
             showPopup();
@@ -169,5 +178,5 @@ export const useGigData = (gigId: string, userId: string) => {
         isPopupVisible,
         isReminderPopupVisible,
         error
-    }
-}
+    };
+};

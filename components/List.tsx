@@ -84,14 +84,14 @@ const { gigsDataFromHook, isLoading, error } = useGigs();
           onPress={() => setShowByWeek(false)}
           style={!showWeek ? styles.touchable : styles.selected}
         >
-          <Text style = {!showWeek ? styles.buttonText : styles.buttonTextSelected}>Gigs Today</Text>  
+          <Text style = {!showWeek ? styles.buttonText : styles.buttonTextSelected}>Today</Text>  
         </TouchableOpacity>
 
         <TouchableOpacity
         onPress={() => setShowByWeek(true)}
           style={showWeek ? styles.touchable : styles.selected}
         >
-        <Text style = {showWeek ? styles.buttonText : styles.buttonTextSelected}>Gigs this Week</Text>
+        <Text style = {showWeek ? styles.buttonText : styles.buttonTextSelected}>This Week</Text>
         </TouchableOpacity>
       </View>
 

@@ -13,6 +13,7 @@ import EditDetails from "../screens/EditDetails";
 import Header from "../components/Header";
 import HeaderProfile from "../components/HeaderProfile";
 import DeleteAccount from "../screens/DeleteAccount";
+import HeaderList from "../components/HeaderList";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import About from "../screens/About";
 import { AuthContext } from "../AuthContext";
@@ -102,6 +103,7 @@ export const MyStack = () => {
       component={List} 
       options={{
         title: '',
+        headerTitle: () => <HeaderList/>,
         headerTintColor:'#2596be',
         headerStyle:{
           backgroundColor:'#E8E7E6'

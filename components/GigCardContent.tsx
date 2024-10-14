@@ -69,7 +69,7 @@ const GigCardContent:FC<GigCardContentProps> = ({
           <View style={styles.venueDetails}>
             <Ionicons name="location-outline" size={14} color="black" />
             <Text style={styles.gigCard_details}>
-              {item?.venue} | {item?.genre.length > 20 ? `${item?.genre.substring(0, 20)}...` : item?.genre}
+            {item?.venue.length > 20 ? `${item?.venue.substring(0, 20)}...` : item?.venue} | {item?.genre.length > 20 ? `${item?.genre.substring(0, 20)}...` : item?.genre}
             </Text>
           </View>
         </View>

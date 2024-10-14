@@ -73,7 +73,7 @@ const GigDetails: FC<Props> = ({ route }): JSX.Element => {
   const isTicketPrice = !isFree ? (
     <View style={styles.text_icon}>
     <Entypo  name="ticket" size={15} color="#778899" />
-    <Text style={styles.details_text}>{formattedTicketPrice}</Text>
+    <Text style={styles.details_text}>{" "}{formattedTicketPrice}</Text>
   </View>
   ) : (
     <View style={styles.text_icon}>
@@ -133,6 +133,34 @@ const GigDetails: FC<Props> = ({ route }): JSX.Element => {
     </TouchableOpacity>
   );
 
+  const formatBlurb = (text:string) => {
+    // Regular expression to match sentences while ignoring URLs
+    const sentenceRegex = /\(?[^\.\?\!]+[\.!\?]\)?(?=\s|$)/g;
+    
+    // URL regex pattern
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    
+    // Replace URLs with placeholders
+    const placeholders = [];
+    const textWithPlaceholders = text.replace(urlRegex, (match) => {
+      placeholders.push(match);
+      return `__URL_${placeholders.length - 1}__`;
+    });
+    
+    // Split into sentences
+    const sentences = textWithPlaceholders.match(sentenceRegex) || [];
+    
+    // Trim sentences and restore URLs
+    const formattedSentences = sentences.map(sentence => {
+      return sentence.trim().replace(/__URL_(\d+)__/g, (_, index) => placeholders[parseInt(index)]);
+    });
+    
+    // Join sentences with single line breaks
+    return formattedSentences.join('\n');
+  };
+
+  const formattedBlurb = formatBlurb(blurb)
+
 
   return (
     <View style={styles.screen}>
@@ -180,7 +208,7 @@ const GigDetails: FC<Props> = ({ route }): JSX.Element => {
 
             <View style={styles.details}>
               <Text style={styles.details_blurb}>Event Details</Text>
-              <Text style={styles.details_text}>{blurb}</Text>
+              <Text style={styles.details_text}>{formattedBlurb}</Text>
             </View>
 
             {linksElement}

@@ -36,6 +36,7 @@ interface IGroupedGigs {
     address: string;
     links: string[];
     gigName_subHeader: string;
+    genreTags: string[];
   }>;
 }
 

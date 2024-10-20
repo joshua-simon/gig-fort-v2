@@ -39,7 +39,7 @@ export interface GigObject {
   links: string[],
   gigName_subHeader:string,
   location?:{longitude:number,latitude:number},
-  genreTags: string[]
+  genreTags: string[],
 }
 
 

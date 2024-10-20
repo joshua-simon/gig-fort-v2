@@ -43,7 +43,6 @@ export function useNotifications(): UseNotificationsReturn {
         const token = await registerForPushNotificationsAsync();
         if (token) {
           setExpoPushToken(token);
-          console.log('Push token:', token);
         } else {
           setNotificationError('Failed to get push token. Notifications may not work.');
         }

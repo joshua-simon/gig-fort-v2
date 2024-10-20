@@ -1,5 +1,5 @@
-import { FC,useContext,useState,useEffect,useCallback } from "react";
-import { StyleSheet, Text, View, TouchableOpacity,Platform,StatusBar } from "react-native";
+import { FC, useContext, useState, useEffect, useCallback } from "react";
+import { StyleSheet, Text, View, TouchableOpacity, Platform, StatusBar, ActivityIndicator } from "react-native";
 import { useGigs } from "../hooks/useGigs";
 import GigsByDay from "./GigsByDay";
 import GigsByWeek from "./GigsByWeek";
@@ -18,23 +18,32 @@ interface Props {
 }
 
 const ListByDay: FC<Props> = ({ navigation }): JSX.Element => {
-
-  
   const [showWeek, setShowByWeek] = useState<boolean>(false);
-  const [ gigs, setGigs ] = useState<GigObject[]>([])
+  const [gigsToday, setGigsToday] = useState<GigObject[]>([]);
+  const [gigsThisWeek, setGigsThisWeek] = useState<Record<string, GigObject[]>>({});
+  const [isWeeklyLoading, setIsWeeklyLoading] = useState<boolean>(false);
   const currentDateMs: number = Date.now();
-  const {user} = useContext(AuthContext) || {}
+  const { user } = useContext(AuthContext) || {};
   const userDetails = useGetUser(user?.uid);
 
-
-const { gigsDataFromHook, isLoading, error } = useGigs();
-
+  const { gigsDataFromHook, isLoading, error } = useGigs();
 
   useEffect(() => {
     if (gigsDataFromHook) {
-      setGigs(gigsDataFromHook);
+      const today = getGigsToday(gigsDataFromHook, currentDateMs);
+      setGigsToday(today);
+      
+      if (showWeek) {
+        setIsWeeklyLoading(true);
+        // Simulate a delay for processing weekly data
+        setTimeout(() => {
+          const thisWeek = getGigsThisWeek(gigsDataFromHook, currentDateMs);
+          setGigsThisWeek(thisWeek);
+          setIsWeeklyLoading(false);
+        }, 500); // Adjust this delay as needed
+      }
     }
-  }, [gigsDataFromHook]);
+  }, [gigsDataFromHook, showWeek]);
 
   useFocusEffect(
     useCallback(() => {
@@ -43,27 +52,28 @@ const { gigsDataFromHook, isLoading, error } = useGigs();
     }, [])
   );
 
+  const formattedDay = format(new Date(currentDateMs), 'EEEE');
+  const formattedWeek = format(new Date(currentDateMs), 'LLLL do y');
 
-  const gigsToday = getGigsToday(gigs, currentDateMs);
-  const gigsThisWeek = getGigsThisWeek(gigs, currentDateMs);
-
-  const formattedDay = format(new Date(currentDateMs),'EEEE')
-  const formattedWeek = format(new Date(currentDateMs),'LLLL do y')
-
+  const handleWeekPress = () => {
+    setShowByWeek(true);
+    setIsWeeklyLoading(true);
+  };
 
   const gigsToRender = showWeek ? (
-    Object.keys(gigsThisWeek).length === 0 ? (
-      <Text style = {{fontFamily: 'LatoRegular', marginLeft:'7%'}}>No gigs this week</Text>
+    isWeeklyLoading ? (
+      <ActivityIndicator size="large" color='#377D8A' />
+    ) : Object.keys(gigsThisWeek).length === 0 ? (
+      <Text style={{ fontFamily: 'LatoRegular', marginLeft: '7%' }}>No gigs this week</Text>
     ) : (
-      <GigsByWeek gigsThisWeek_grouped={gigsThisWeek} navigation={navigation} /> 
+      <GigsByWeek gigsThisWeek_grouped={gigsThisWeek} navigation={navigation} />
     )
-
   ) : (
-     gigsToday?.length === 0 ? (
-      <Text style = {{fontFamily: 'LatoRegular', marginLeft:'7%'}}>No gigs today</Text>
-     ) : (
+    gigsToday.length === 0 ? (
+      <Text style={{ fontFamily: 'LatoRegular', marginLeft: '7%' }}>No gigs today</Text>
+    ) : (
       <GigsByDay navigation={navigation} gigsFromSelectedDate={gigsToday} />
-     )
+    )
   );
 
   const showDate = !showWeek ? (
@@ -71,34 +81,34 @@ const { gigsDataFromHook, isLoading, error } = useGigs();
       <Text style={styles.headerText_main}>{formattedDay}</Text>
       <Text style={styles.headerText_sub}>{formattedWeek}</Text>
     </View>
-  ) : (
-      null
-  );
-
+  ) : null;
 
   return (
     <View style={{ flex: 1 }}>
-
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={() => setShowByWeek(false)}
           style={!showWeek ? styles.touchable : styles.selected}
         >
-          <Text style = {!showWeek ? styles.buttonText : styles.buttonTextSelected}>Today</Text>  
+          <Text style={!showWeek ? styles.buttonText : styles.buttonTextSelected}>Today</Text>  
         </TouchableOpacity>
 
         <TouchableOpacity
-        onPress={() => setShowByWeek(true)}
+          onPress={handleWeekPress}
           style={showWeek ? styles.touchable : styles.selected}
         >
-        <Text style = {showWeek ? styles.buttonText : styles.buttonTextSelected}>This Week</Text>
+          <Text style={showWeek ? styles.buttonText : styles.buttonTextSelected}>This Week</Text>
         </TouchableOpacity>
       </View>
 
       {showDate}
 
-      <View style = {styles.listContainer}>
-        {gigsToRender}
+      <View style={styles.listContainer}>
+        {isLoading ? (
+          <ActivityIndicator size="large" color='#377D8A' />
+        ) : (
+          gigsToRender
+        )}
       </View>
     </View>
   );

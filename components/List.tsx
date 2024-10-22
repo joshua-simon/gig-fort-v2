@@ -10,6 +10,7 @@ import { AuthContext } from "../AuthContext";
 import { useGetUser } from "../hooks/useGetUser";
 import { useFocusEffect } from '@react-navigation/native';
 import { GigObject } from "../routes/homeStack";
+import { IGroupedGigs } from "./GigsByWeek";
 
 type ListScreenNavigationProp = listProps["navigation"];
 
@@ -20,7 +21,7 @@ interface Props {
 const ListByDay: FC<Props> = ({ navigation }): JSX.Element => {
   const [showWeek, setShowByWeek] = useState<boolean>(false);
   const [gigsToday, setGigsToday] = useState<GigObject[]>([]);
-  const [gigsThisWeek, setGigsThisWeek] = useState<Record<string, GigObject[]>>({});
+  const [gigsThisWeek, setGigsThisWeek] = useState<IGroupedGigs>({});
   const [isWeeklyLoading, setIsWeeklyLoading] = useState<boolean>(false);
   const currentDateMs: number = Date.now();
   const { user } = useContext(AuthContext) || {};
@@ -40,7 +41,7 @@ const ListByDay: FC<Props> = ({ navigation }): JSX.Element => {
           const thisWeek = getGigsThisWeek(gigsDataFromHook, currentDateMs);
           setGigsThisWeek(thisWeek);
           setIsWeeklyLoading(false);
-        }, 500); // Adjust this delay as needed
+        }, 0); // Adjust this delay as needed
       }
     }
   }, [gigsDataFromHook, showWeek]);

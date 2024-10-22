@@ -49,9 +49,6 @@ export default function App() {
     // Request permission for notifications (iOS)
     const requestPermissions = async () => {
       const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== 'granted') {
-        alert('Permission to receive notifications was denied!');
-      }
     };
 
     requestPermissions();

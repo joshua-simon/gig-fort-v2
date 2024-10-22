@@ -21,7 +21,7 @@ export const useGigData = (gigId: string, userId: string) => {
     const [gigData, setGigData] = useState<any>(null);
     const [isReminderPopupVisible, setIsReminderPopupVisible] = useState(false);
 
-    const { scheduleNotification, cancelNotification, notificationError } = useNotifications();
+    const { scheduleNotification, cancelNotification, notificationError, permissionStatus } = useNotifications();
 
     useEffect(() => {
         if (notificationError) {
@@ -116,38 +116,49 @@ export const useGigData = (gigId: string, userId: string) => {
         setIsReminderPopupVisible(false);
     };
 
-    const setNotification = async (minutes: number) => {
-        if (!userId || !gigData) return;
-        const userRef = doc(db, "users", userId);
-        try {
-            await updateDoc(userRef, {
-                notifiedGigs: arrayUnion(gigId)
-            });
-            setIsNotified(true);
-            
-            if (gigData.dateAndTime) {
-                const notificationDate = new Date(gigData.dateAndTime.seconds * 1000);
-                notificationDate.setMinutes(notificationDate.getMinutes() - minutes);
+// In useGigData.ts
+// Modify the setNotification function:
 
-                const notificationId = await scheduleNotification(
-                    {
-                        title: `Upcoming Gig: ${gigData.gigName}`,
-                        body: `Don't forget! ${gigData.gigName} is starting in ${minutes} minutes at ${gigData.venue}`,
-                        data: { gigId }
-                    },
-                    { date: notificationDate }
-                );
-                
-                console.log("Notification scheduled with ID:", notificationId);
-                // Optionally, save this notificationId to the user's document in Firestore
-            }
+const setNotification = async (minutes: number) => {
+    if (!userId || !gigData) return;
+    
+    // Check if we have notification permission
+    if (permissionStatus !== 'granted') {
+        // Silently return without showing error
+        return;
+    }
+
+    const userRef = doc(db, "users", userId);
+    try {
+        await updateDoc(userRef, {
+            notifiedGigs: arrayUnion(gigId)
+        });
+        setIsNotified(true);
+        
+        if (gigData.dateAndTime) {
+            const notificationDate = new Date(gigData.dateAndTime.seconds * 1000);
+            notificationDate.setMinutes(notificationDate.getMinutes() - minutes);
+
+            const notificationId = await scheduleNotification(
+                {
+                    title: `Upcoming Gig: ${gigData.gigName}`,
+                    body: `Don't forget! ${gigData.gigName} is starting in ${minutes} minutes at ${gigData.venue}`,
+                    data: { gigId }
+                },
+                { date: notificationDate }
+            );
             
-            showPopup();
-        } catch (error) {
-            console.error("Error setting notification", error);
-            setError(error as FirestoreError);
+            if (notificationId) {
+                console.log("Notification scheduled with ID:", notificationId);
+            }
         }
-    };
+        
+        showPopup();
+    } catch (error) {
+        console.error("Error setting notification", error);
+        setError(error as FirestoreError);
+    }
+};
 
     const cancelNotificationForGig = async () => {
         if (!userId) return;
@@ -177,6 +188,7 @@ export const useGigData = (gigId: string, userId: string) => {
         isGigLiked,
         isPopupVisible,
         isReminderPopupVisible,
-        error
+        error,
+        permissionStatus
     };
 };

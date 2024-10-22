@@ -1,5 +1,6 @@
 import { FC } from 'react';
-import {View,Text,TouchableOpacity,StyleSheet,Image } from 'react-native'
+import {View,Text,TouchableOpacity,StyleSheet,Image,Alert } from 'react-native'
+import * as Notifications from 'expo-notifications';
 import { Ionicons, FontAwesome, AntDesign } from "@expo/vector-icons";
 import ButtonBar from './ButtonBar';
 import ReminderPopup from './ReminderPopup';
@@ -22,7 +23,8 @@ interface GigCardContentProps {
   isPopupVisible: any;
   isReminderPopupVisible: any;
   cancelNotificationForGig: any;
-  setNotification: any
+  setNotification: any;
+  permissionStatus: string | null;
 }
 
 const GigCardContent:FC<GigCardContentProps> = ({ 
@@ -42,15 +44,52 @@ const GigCardContent:FC<GigCardContentProps> = ({
   isPopupVisible,
   isReminderPopupVisible,
   cancelNotificationForGig,
-  setNotification
+  setNotification,
+  permissionStatus
 }) => {
 
-  const handleReminderPress = () => {
+  const handleReminderPress = async () => {
+    // If already notified, just cancel it
     if (isNotified) {
       cancelNotificationForGig();
-    } else {
-      showReminderPopup();
+      return;
     }
+  
+    // Check permission status and handle accordingly
+    if (permissionStatus === 'denied') {
+      Alert.alert(
+        'Notifications Disabled',
+        'To set reminders for gigs, you need to enable notifications in your device settings.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+        ],
+      );
+      return;
+    }
+  
+    if (permissionStatus === null || permissionStatus === 'undetermined') {
+      try {
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert(
+            'Permission Required',
+            'To receive gig reminders, please allow notifications when prompted.',
+            [{ text: 'OK' }]
+          );
+          return;
+        }
+      } catch (error) {
+        console.error('Error requesting notification permissions:', error);
+        return;
+      }
+    }
+  
+    // If we get here, we either already had permission (permissionStatus === 'granted')
+    // or just got permission from the user
+    showReminderPopup();
   };
 
   const gigTitle =

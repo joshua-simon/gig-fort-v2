@@ -14,7 +14,7 @@ import GigCard from "./GigCard";
 
 type ListScreenNavigationProp = listProps["navigation"];
 
-interface IGroupedGigs {
+export interface IGroupedGigs {
   [date: string]: Array<{
     blurb: string;
     dateAndTime: {

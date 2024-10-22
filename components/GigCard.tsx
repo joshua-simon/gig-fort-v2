@@ -51,7 +51,8 @@ const GigCard:FC<Props> = ({ item, navigation }) => {
     isPopupVisible,
     isReminderPopupVisible,
     isNotified,
-    setNotification
+    setNotification,
+    permissionStatus
   } = useGigData(item?.id, user?.uid);
 
 
@@ -74,6 +75,7 @@ const GigCard:FC<Props> = ({ item, navigation }) => {
     isPopupVisible={isPopupVisible}
     isReminderPopupVisible={isReminderPopupVisible}
     setNotification = {setNotification}
+    permissionStatus={permissionStatus}
     />
   )
 };

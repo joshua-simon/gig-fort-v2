@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Linking} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from '../routes/homeStack';
-import { Button } from 'react-native';
+import { buttonFilled,buttonFilled_text } from '../styles';
 
 export type termsProps = NativeStackScreenProps<RootStackParamList, 'TermsAndConditions', 'MyStack'>
 
@@ -29,24 +29,24 @@ const TermsAndConditions = ({ navigation }: termsProps) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Terms and Conditions</Text>
-        <ScrollView style={styles.scrollView}>
-          <Text style={styles.termsText}>
-            [Your terms and conditions text here]
-            
-            1. Introduction
-            These Terms and Conditions govern your use of our application...
-
-            2. Acceptance
-            By accessing and using this application, you accept and agree to be bound by these Terms...
-          </Text>
-        </ScrollView>
-        <Button
-          title="Accept Terms & Conditions"
-          onPress={handleAcceptTerms}
+      <View style = {styles.headerContainer}>
+        <Image
+          style = {styles.ellipse}
+          source = {require('../assets/Ellipse_28.png')}
         />
+        <Text style = {styles.header}>Welcome to Gig Fort!</Text>
       </View>
+      <Text style = {styles.accept}>
+        By pressing 'Accept', you agree to Gig Fort's 
+        <Text style={{ color: '#377D8A', textDecorationLine: 'underline' }} onPress={() => Linking.openURL('https://www.gigfort.nz/')}> Terms and Conditions</Text> and {""} 
+        <Text style={{ color: '#377D8A', textDecorationLine: 'underline' }} onPress={() => Linking.openURL('https://www.gig-fort-review.web.app//')}>Privacy Policy</Text>
+      </Text>
+        <TouchableOpacity
+          onPress={handleAcceptTerms}
+          style = {styles.button}
+        >
+          <Text style = {styles.button_text}>Accept</Text>
+        </TouchableOpacity>
     </View>
   );
 };
@@ -54,29 +54,48 @@ const TermsAndConditions = ({ navigation }: termsProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#d7bf9a',
+    flexDirection:'column',
+    alignItems:'center',
   },
-  content: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
+  ellipse: {
+    width:'100%'
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
+  button: {
+    backgroundColor:'#377D8A',
+    padding: 10,
+    borderRadius: 4,
+    alignItems: 'center',
+    marginBottom: '10%',
+    width:'50%',
+    marginTop:'auto'
+  },
+  button_text: {
+    color:'#FFFFFF',
+    textAlign:'center',
     fontFamily: 'NunitoSans',
+    fontSize:16,
+    lineHeight:22   
   },
-  scrollView: {
-    maxHeight: '70%',
-    marginBottom: 20,
+  headerContainer: {
+    width: '100%',
+    position: 'relative',
   },
-  termsText: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontFamily: 'LatoRegular',
+  header: {
+    fontFamily:'NunitoSans',
+    color:'#FFFFFF',
+    position: 'absolute',
+    width:'100%',
+    textAlign:'center',
+    top: '40%',
+    fontSize:30
   },
+  accept:{
+    fontFamily:'NunitoSans',
+    fontSize:16,
+    textAlign:'center',
+    top:'28%'
+  }
 });
 
 export default TermsAndConditions;

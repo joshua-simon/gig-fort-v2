@@ -79,13 +79,13 @@ export type editDetailsProps = NativeStackScreenProps<RootStackParamList, 'EditD
 export type termsProps = NativeStackScreenProps<RootStackParamList, 'TermsAndConditions', 'MyStack'>
 
 
-export const MyStack = () => {
+export const MyStack = ({ termsAccepted }: { termsAccepted: boolean | null }) => {
 
   const { user } = useContext(AuthContext)
 
   return (
     <Stack.Navigator
-        initialRouteName="TermsAndConditions"
+        initialRouteName={termsAccepted ? "Map" : "TermsAndConditions"}
     >
     <Stack.Screen 
       name="TermsAndConditions" 

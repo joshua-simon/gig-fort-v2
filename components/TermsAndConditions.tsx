@@ -8,6 +8,16 @@ import { Button } from 'react-native';
 export type termsProps = NativeStackScreenProps<RootStackParamList, 'TermsAndConditions', 'MyStack'>
 
 const TermsAndConditions = ({ navigation }: termsProps) => {
+    useEffect(() => {
+        const checkTerms = async () => {
+          const terms = await AsyncStorage.getItem('@terms_accepted');
+          if (terms === 'true') {
+            navigation.replace('Map');
+          }
+        };
+        checkTerms();
+      }, []);
+      
   const handleAcceptTerms = async () => {
     try {
       await AsyncStorage.setItem('@terms_accepted', 'true');

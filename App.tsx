@@ -94,7 +94,7 @@ export default function App() {
       <MenuProvider>
         <AuthProvider>
           <NavigationContainer>
-            <MyStack />
+            <MyStack termsAccepted={termsAccepted} />
           </NavigationContainer>
         </AuthProvider>
       </MenuProvider>

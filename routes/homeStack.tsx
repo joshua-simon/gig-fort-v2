@@ -10,10 +10,10 @@ import RegistrationSuccess from "../screens/RegistrationSuccess";
 import Profile from "../screens/Profile";
 import Login from "../screens/Login";
 import EditDetails from "../screens/EditDetails";
-import Header from "../components/Header";
 import HeaderProfile from "../components/HeaderProfile";
 import DeleteAccount from "../screens/DeleteAccount";
 import HeaderList from "../components/HeaderList";
+import TermsAndConditions from "../components/TermsAndConditions";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import About from "../screens/About";
 import { AuthContext } from "../AuthContext";
@@ -61,7 +61,8 @@ export type RootStackParamList = {
   Login:undefined,
   EditDetails:UserDetails,
   Header:undefined,
-  DeleteAccount:undefined
+  DeleteAccount:undefined,
+  TermsAndConditions:undefined
 }
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -75,6 +76,7 @@ export type profileProps = NativeStackScreenProps<RootStackParamList, 'Profile',
 export type loginProps = NativeStackScreenProps<RootStackParamList, 'Login', 'MyStack'>
 export type deleteAccountProps = NativeStackScreenProps<RootStackParamList, 'DeleteAccount', 'MyStack'>
 export type editDetailsProps = NativeStackScreenProps<RootStackParamList, 'EditDetails', 'MyStack'>
+export type termsProps = NativeStackScreenProps<RootStackParamList, 'TermsAndConditions', 'MyStack'>
 
 
 export const MyStack = () => {
@@ -83,8 +85,15 @@ export const MyStack = () => {
 
   return (
     <Stack.Navigator
-        initialRouteName="Map"
+        initialRouteName="TermsAndConditions"
     >
+    <Stack.Screen 
+      name="TermsAndConditions" 
+      component={TermsAndConditions} 
+      options={{
+        headerShown: false,
+      }}
+    />
       <Stack.Screen 
       name="Map" 
       component={Map} 

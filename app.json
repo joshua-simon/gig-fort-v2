@@ -2,7 +2,7 @@
   "expo": {
     "name": "Gig Fort",
     "slug": "gig-fort-v2",
-    "version": "1.0.8",
+    "version": "1.0.10",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -39,7 +39,7 @@
           "apiKey": "AIzaSyD7q5ENGfNd9YM1nO6lRGG3CMOQMJHRc4Y"
         }
       },
-      "versionCode": 25,
+      "versionCode": 28,
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"

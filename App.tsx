@@ -7,6 +7,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen'
 import { AuthProvider } from './AuthContext';
 import { MenuProvider } from 'react-native-popup-menu';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 
 
@@ -22,6 +23,7 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState<boolean | null>(null);
 
   const [fontsLoaded] = useFonts({
     'NunitoSans': require('./assets/NunitoSans-Bold.ttf'),
@@ -32,6 +34,9 @@ export default function App() {
     async function prepare() {
       try {
         // Pre-load fonts, make any API calls you need to do here
+        const terms = await AsyncStorage.getItem('@terms_accepted');
+        setTermsAccepted(terms === 'true');
+
         await Promise.all([
           // Your existing font loading is handled by useFonts
           // Add any other async operations here

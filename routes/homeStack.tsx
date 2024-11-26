@@ -62,7 +62,16 @@ export type RootStackParamList = {
   EditDetails:UserDetails,
   Header:undefined,
   DeleteAccount:undefined,
-  TermsAndConditions:undefined
+  TermsAndConditions: {
+    onTermsAccept: (accepted: boolean, navigation: any) => Promise<void>;
+  }
+
+}
+
+interface MyStackProps {
+  termsAccepted: boolean | null;
+  onTermsAccept: (accepted: boolean, navigation: any) => Promise<void>;
+  notificationPermission: boolean;
 }
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -79,7 +88,7 @@ export type editDetailsProps = NativeStackScreenProps<RootStackParamList, 'EditD
 export type termsProps = NativeStackScreenProps<RootStackParamList, 'TermsAndConditions', 'MyStack'>
 
 
-export const MyStack = ({ termsAccepted }: { termsAccepted: boolean | null }) => {
+export const MyStack = ({termsAccepted, onTermsAccept, notificationPermission  }: MyStackProps) => {
 
   const { user } = useContext(AuthContext)
 
@@ -88,7 +97,8 @@ export const MyStack = ({ termsAccepted }: { termsAccepted: boolean | null }) =>
         initialRouteName={termsAccepted ? "Map" : "TermsAndConditions"}
     >
     <Stack.Screen 
-      name="TermsAndConditions" 
+      name="TermsAndConditions"
+      initialParams={{ onTermsAccept }}
       component={TermsAndConditions} 
       options={{
         headerShown: false,

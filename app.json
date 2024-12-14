@@ -22,7 +22,6 @@
       "bundleIdentifier": "com.joshsimon.gigfortv2",
       "icon": "./assets/icon.png",
       "buildNumber": "1.0.23",
-      "deploymentTarget": "13.4",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription":"Gig Fort uses your location to show your position on the map relative to nearby gigs and to enable distance-based filtering of events.",
         "NSLocationUsageDescription": "Gig Fort uses your location to show your position on the map relative to nearby gigs and to enable distance-based filtering of events."

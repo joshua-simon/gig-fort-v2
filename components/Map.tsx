@@ -7,7 +7,8 @@ import {
   Platform,
   Dimensions,
   StatusBar,
-  TouchableOpacity
+  TouchableOpacity,
+  Linking
 } from "react-native";
 import { Marker,Callout } from "react-native-maps";
 import { mapStyle } from "../util/mapStyle";
@@ -339,6 +340,7 @@ const renderMarker = (data) => {
         >
           {userMarker}
         </ClusteredMapView>
+        <Text style={styles.overlayText}>Powered by <Text style ={styles.overlayText_link} onPress={() => Linking.openURL('https://www.eventfinda.co.nz/')}>Eventfinda</Text></Text>
       </View>
       <View style={styles.overlay}>
         <View style={styles.overlay_header}>
@@ -704,6 +706,21 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  overlayText: {
+    position: 'absolute',
+    bottom: 0,
+    right: 20,
+    zIndex: 1,
+    color: '#377D8A',
+    padding: 5,
+    borderRadius: 5,
+    fontFamily: 'LatoRegular'
+  },
+  overlayText_link: {
+    color:'#377D8A',
+    textDecorationLine:'underline',
+    fontFamily: 'LatoRegular'
+  }
 });
 
 export default GigMap;

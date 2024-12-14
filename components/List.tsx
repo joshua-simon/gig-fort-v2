@@ -1,5 +1,5 @@
 import { FC, useContext, useState, useEffect, useCallback } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Platform, StatusBar, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Platform, StatusBar, ActivityIndicator,Linking } from "react-native";
 import { useGigs } from "../hooks/useGigs";
 import GigsByDay from "./GigsByDay";
 import GigsByWeek from "./GigsByWeek";
@@ -81,6 +81,7 @@ const ListByDay: FC<Props> = ({ navigation }): JSX.Element => {
     <View testID="gigMapHeader" style={styles.headerText}>
       <Text style={styles.headerText_main}>{formattedDay}</Text>
       <Text style={styles.headerText_sub}>{formattedWeek}</Text>
+      <Text style={{fontFamily:'LatoRegular', color:'#377D8A',marginTop:'1%'}}>Powered by <Text style ={{fontFamily:'LatoRegular', color:'#377D8A',textDecorationLine:'underline'}} onPress={() => Linking.openURL('https://www.eventfinda.co.nz/')}>Eventfinda</Text></Text>
     </View>
   ) : null;
 
@@ -198,7 +199,8 @@ const styles = StyleSheet.create({
     width: 30,
   },
   listContainer: {
-    marginTop: 20
+    marginTop: 20,
+    paddingBottom:20
   },
 });
 

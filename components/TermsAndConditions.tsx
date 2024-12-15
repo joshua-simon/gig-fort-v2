@@ -51,7 +51,7 @@ const TermsAndConditions = ({ navigation, route }: termsProps) => {
                 </Text> and{' '}
                 <Text 
                     style={{ color: '#377D8A', textDecorationLine: 'underline' }} 
-                    onPress={() => Linking.openURL('https://www.gig-fort-review.web.app//')}
+                    onPress={() => Linking.openURL('https://www.gigfort.nz/privacypolicy')}
                 >
                     Privacy Policy
                 </Text>

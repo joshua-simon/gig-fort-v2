@@ -2,7 +2,7 @@
   "expo": {
     "name": "Gig Fort",
     "slug": "gig-fort-v2",
-    "version": "1.0.14",
+    "version": "1.0.15",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -29,8 +29,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./assets/icon_new.png",
+        "backgroundColor": "#000000"
       },
       "package": "com.gigfort.v2",
       "config": {
@@ -38,7 +38,7 @@
           "apiKey": "AIzaSyD7q5ENGfNd9YM1nO6lRGG3CMOQMJHRc4Y"
         }
       },
-      "versionCode": 32,
+      "versionCode": 33,
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"

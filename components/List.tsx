@@ -1,5 +1,5 @@
-import { FC, useContext, useState, useEffect, useCallback } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Platform, StatusBar, ActivityIndicator,Linking } from "react-native";
+import { FC, useContext, useState, useEffect, useCallback, useMemo } from "react";
+import { StyleSheet, Text, View, TouchableOpacity, Platform, StatusBar, ActivityIndicator, Linking } from "react-native";
 import { useGigs } from "../hooks/useGigs";
 import GigsByDay from "./GigsByDay";
 import GigsByWeek from "./GigsByWeek";
@@ -20,97 +20,113 @@ interface Props {
 
 const ListByDay: FC<Props> = ({ navigation }): JSX.Element => {
   const [showWeek, setShowByWeek] = useState<boolean>(false);
-  const [gigsToday, setGigsToday] = useState<GigObject[]>([]);
-  const [gigsThisWeek, setGigsThisWeek] = useState<IGroupedGigs>({});
   const [isWeeklyLoading, setIsWeeklyLoading] = useState<boolean>(false);
-  const currentDateMs: number = Date.now();
   const { user } = useContext(AuthContext) || {};
   const userDetails = useGetUser(user?.uid);
 
   const { gigsDataFromHook, isLoading, error } = useGigs();
+  const currentDateMs = useMemo(() => Date.now(), []); // Memoize the current date
 
-  useEffect(() => {
-    if (gigsDataFromHook) {
-      const today = getGigsToday(gigsDataFromHook, currentDateMs);
-      setGigsToday(today);
-      
-      if (showWeek) {
-        setIsWeeklyLoading(true);
-        // Simulate a delay for processing weekly data
-        setTimeout(() => {
-          const thisWeek = getGigsThisWeek(gigsDataFromHook, currentDateMs);
-          setGigsThisWeek(thisWeek);
-          setIsWeeklyLoading(false);
-        }, 0); // Adjust this delay as needed
-      }
+  // Memoize the processed gigs data
+  const { gigsToday, gigsThisWeek } = useMemo(() => {
+    if (!gigsDataFromHook) {
+      return { gigsToday: [], gigsThisWeek: {} };
     }
-  }, [gigsDataFromHook, showWeek]);
+    return {
+      gigsToday: getGigsToday(gigsDataFromHook, currentDateMs),
+      gigsThisWeek: getGigsThisWeek(gigsDataFromHook, currentDateMs)
+    };
+  }, [gigsDataFromHook, currentDateMs]);
+
+  // Memoize formatted dates
+  const { formattedDay, formattedWeek } = useMemo(() => ({
+    formattedDay: format(new Date(currentDateMs), 'EEEE'),
+    formattedWeek: format(new Date(currentDateMs), 'LLLL do y')
+  }), [currentDateMs]);
 
   useFocusEffect(
     useCallback(() => {
       StatusBar.setBackgroundColor('#E8E7E6');
-      return () => {};  // optional cleanup 
+      return () => {};
     }, [])
   );
 
-  const formattedDay = format(new Date(currentDateMs), 'EEEE');
-  const formattedWeek = format(new Date(currentDateMs), 'LLLL do y');
-
-  const handleWeekPress = () => {
+  const handleWeekPress = useCallback(() => {
     setShowByWeek(true);
-    setIsWeeklyLoading(true);
-  };
+  }, []);
 
-  const gigsToRender = showWeek ? (
-    isWeeklyLoading ? (
-      <ActivityIndicator size="large" color='#377D8A' />
-    ) : Object.keys(gigsThisWeek).length === 0 ? (
-      <Text style={{ fontFamily: 'LatoRegular', marginLeft: '7%' }}>No gigs this week</Text>
-    ) : (
-      <GigsByWeek gigsThisWeek_grouped={gigsThisWeek} navigation={navigation} />
-    )
-  ) : (
-    gigsToday.length === 0 ? (
+  const handleTodayPress = useCallback(() => {
+    setShowByWeek(false);
+  }, []);
+
+  // Memoize the gigs content
+  const gigsContent = useMemo(() => {
+    if (isLoading) {
+      return <ActivityIndicator size="large" color='#377D8A' />;
+    }
+
+    if (showWeek) {
+      return Object.keys(gigsThisWeek).length === 0 ? (
+        <Text style={{ fontFamily: 'LatoRegular', marginLeft: '7%' }}>No gigs this week</Text>
+      ) : (
+        <GigsByWeek gigsThisWeek_grouped={gigsThisWeek} navigation={navigation} />
+      );
+    }
+
+    return gigsToday.length === 0 ? (
       <Text style={{ fontFamily: 'LatoRegular', marginLeft: '7%' }}>No gigs today</Text>
     ) : (
       <GigsByDay navigation={navigation} gigsFromSelectedDate={gigsToday} />
-    )
-  );
+    );
+  }, [isLoading, showWeek, gigsThisWeek, gigsToday, navigation]);
 
-  const showDate = !showWeek ? (
-    <View testID="gigMapHeader" style={styles.headerText}>
-      <Text style={styles.headerText_main}>{formattedDay}</Text>
-      <Text style={styles.headerText_sub}>{formattedWeek}</Text>
-      <Text style={{fontFamily:'LatoRegular', color:'#377D8A',marginTop:'1%'}}>Powered by <Text style ={{fontFamily:'LatoRegular', color:'#377D8A',textDecorationLine:'underline'}} onPress={() => Linking.openURL('https://www.eventfinda.co.nz/')}>Eventfinda</Text></Text>
-    </View>
-  ) : null;
+  // Memoize the date header
+  const dateHeader = useMemo(() => {
+    if (showWeek) return null;
+    
+    return (
+      <View testID="gigMapHeader" style={styles.headerText}>
+        <Text style={styles.headerText_main}>{formattedDay}</Text>
+        <Text style={styles.headerText_sub}>{formattedWeek}</Text>
+        <Text style={{fontFamily:'LatoRegular', color:'#377D8A',marginTop:'1%'}}>
+          Powered by{' '}
+          <Text 
+            style={{fontFamily:'LatoRegular', color:'#377D8A',textDecorationLine:'underline'}}
+            onPress={() => Linking.openURL('https://www.eventfinda.co.nz/')}
+          >
+            Eventfinda
+          </Text>
+        </Text>
+      </View>
+    );
+  }, [showWeek, formattedDay, formattedWeek]);
 
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          onPress={() => setShowByWeek(false)}
+          onPress={handleTodayPress}
           style={!showWeek ? styles.touchable : styles.selected}
         >
-          <Text style={!showWeek ? styles.buttonText : styles.buttonTextSelected}>Today</Text>  
+          <Text style={!showWeek ? styles.buttonText : styles.buttonTextSelected}>
+            Today
+          </Text>  
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={handleWeekPress}
           style={showWeek ? styles.touchable : styles.selected}
         >
-          <Text style={showWeek ? styles.buttonText : styles.buttonTextSelected}>This Week</Text>
+          <Text style={showWeek ? styles.buttonText : styles.buttonTextSelected}>
+            This Week
+          </Text>
         </TouchableOpacity>
       </View>
 
-      {showDate}
+      {dateHeader}
 
       <View style={styles.listContainer}>
-        {isLoading ? (
-          <ActivityIndicator size="large" color='#377D8A' />
-        ) : (
-          gigsToRender
-        )}
+        {gigsContent}
       </View>
     </View>
   );
@@ -137,7 +153,6 @@ const styles = StyleSheet.create({
     backgroundColor:'#377D8A',
     borderRadius:8,
     marginRight:'20%'
-
   },
   selected: {
     padding: 8,
@@ -146,10 +161,10 @@ const styles = StyleSheet.create({
     marginRight:'20%',
   },
   buttonText: {
-  fontFamily: "NunitoSans",
-  color:'#FFFFFF',
-  textAlign:'center',
-  lineHeight: 21.82
+    fontFamily: "NunitoSans",
+    color:'#FFFFFF',
+    textAlign:'center',
+    lineHeight: 21.82
   },
   buttonTextSelected: {
     fontFamily: "NunitoSans",

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { doc, FirestoreError, onSnapshot, arrayUnion, arrayRemove, updateDoc } from "firebase/firestore";
 import { db } from '../firebase';
 import {
@@ -11,6 +11,17 @@ import {
 } from "./databaseFunctions";
 import { useNotifications } from './useNotifications';
 
+// Separate interface for gig data to improve type safety
+interface GigData {
+    likes: number;
+    gigName: string;
+    venue: string;
+    dateAndTime: {
+        seconds: number;
+    };
+    [key: string]: any;
+}
+
 export const useGigData = (gigId: string, userId: string) => {
     const [isGigSaved, setIsGigSaved] = useState(false);
     const [likes, setLikes] = useState(0);
@@ -18,164 +29,149 @@ export const useGigData = (gigId: string, userId: string) => {
     const [isGigLiked, setIsGigLiked] = useState(false);
     const [isPopupVisible, setPopupVisible] = useState(false);
     const [error, setError] = useState<FirestoreError | null>(null);
-    const [gigData, setGigData] = useState<any>(null);
+    const [gigData, setGigData] = useState<GigData | null>(null);
     const [isReminderPopupVisible, setIsReminderPopupVisible] = useState(false);
 
     const { scheduleNotification, cancelNotification, notificationError, permissionStatus } = useNotifications();
 
+    // Memoize document references
+    const gigRef = useMemo(() => gigId ? doc(db, "gigs", gigId) : null, [gigId]);
+    const userRef = useMemo(() => userId ? doc(db, "users", userId) : null, [userId]);
+
+    // Handle notification errors
     useEffect(() => {
         if (notificationError) {
             console.error("Notification error:", notificationError);
         }
     }, [notificationError]);
 
+    // Setup snapshots for gig and user data
     useEffect(() => {
-        if (!gigId) return;
+        if (!gigRef) return;
 
-        const gigRef = doc(db, "gigs", gigId);
-    
         const unsubscribe = onSnapshot(gigRef, (gigSnapshot) => {
-          const data = gigSnapshot.data();
-
-          if (data) {
-            setLikes(data.likes || 0);
-            setGigData(data);
-          }
-        }, (err) => {
-          setError(err);
-        });
-    
-        let unsubscribeUser: () => void;
-        if (userId) {
-          const userRef = doc(db, 'users', userId);
-          unsubscribeUser = onSnapshot(userRef, (userSnapshot) => {
-            const userData = userSnapshot.data();
-            
-            if (userData) {
-              setIsGigLiked(userData.likedGigs?.includes(gigId) ?? false);
-              setIsGigSaved(userData.savedGigs?.includes(gigId) ?? false);
-              setIsNotified(userData.notifiedGigs?.includes(gigId) ?? false);
+            const data = gigSnapshot.data() as GigData;
+            if (data) {
+                setLikes(data.likes || 0);
+                setGigData(data);
             }
-          }, (err: FirestoreError) => {
+        }, (err) => {
             setError(err);
-          });
-        }
+        });
 
-        return () => {
-          unsubscribe();
-          if (unsubscribeUser) {
-            unsubscribeUser();
-          }
-        };
-    }, [gigId, userId]);
+        return () => unsubscribe();
+    }, [gigRef]);
 
-    const toggleSaveGig = async () => {
-        if (!userId) return;
+    useEffect(() => {
+        if (!userRef) return;
+
+        const unsubscribe = onSnapshot(userRef, (userSnapshot) => {
+            const userData = userSnapshot.data();
+            if (userData) {
+                setIsGigLiked(userData.likedGigs?.includes(gigId) ?? false);
+                setIsGigSaved(userData.savedGigs?.includes(gigId) ?? false);
+                setIsNotified(userData.notifiedGigs?.includes(gigId) ?? false);
+            }
+        }, (err: FirestoreError) => {
+            setError(err);
+        });
+
+        return () => unsubscribe();
+    }, [userRef, gigId]);
+
+    // Memoize handlers to prevent unnecessary re-renders
+    const toggleSaveGig = useCallback(async () => {
+        if (!userId || !userRef) return;
+        
         try {
             if (isGigSaved) {
                 await removeSavedGig(gigId, userId);
-            } else { 
+            } else {
                 await addSavedGigs(gigId, userId);
             }
-            setIsGigSaved(!isGigSaved);
         } catch (error) {
             console.error("Error toggling save gig", error);
             setError(error as FirestoreError);
         }
-    };
-    
-    const toggleLiked = async () => {
-        if (!userId) return;
+    }, [userId, gigId, isGigSaved, userRef]);
+
+    const toggleLiked = useCallback(async () => {
+        if (!userId || !gigRef) return;
+        
         try {
-            if (isGigLiked) {
-                await decrementLikesByOne(gigId);
-                await removeLikedGigIDfromUser(gigId, userId);
-            } else {
-                await incrementLikesByOne(gigId);
-                await addLikedGigIDtoUser(gigId, userId);
-            }
-            setIsGigLiked(!isGigLiked);
+            const updates = isGigLiked
+                ? [decrementLikesByOne(gigId), removeLikedGigIDfromUser(gigId, userId)]
+                : [incrementLikesByOne(gigId), addLikedGigIDtoUser(gigId, userId)];
+            
+            await Promise.all(updates);
         } catch (error) {
             console.error("Error toggling like", error);
             setError(error as FirestoreError);
         }
-    };
+    }, [userId, gigId, isGigLiked, gigRef]);
 
-    const showPopup = () => {
-      setPopupVisible(true);
-      setTimeout(() => {
-        setPopupVisible(false);
-      }, 3000);
-    };
+    const showPopup = useCallback(() => {
+        setPopupVisible(true);
+        setTimeout(() => setPopupVisible(false), 3000);
+    }, []);
 
-    const showReminderPopup = () => {
+    const showReminderPopup = useCallback(() => {
         setIsReminderPopupVisible(true);
-    };
+    }, []);
 
-    const hideReminderPopup = () => {
+    const hideReminderPopup = useCallback(() => {
         setIsReminderPopupVisible(false);
-    };
+    }, []);
 
-// In useGigData.ts
-// Modify the setNotification function:
+    const setNotification = useCallback(async (minutes: number) => {
+        if (!userId || !gigData || !userRef || permissionStatus !== 'granted') return;
 
-const setNotification = async (minutes: number) => {
-    if (!userId || !gigData) return;
-    
-    // Check if we have notification permission
-    if (permissionStatus !== 'granted') {
-        // Silently return without showing error
-        return;
-    }
+        try {
+            await updateDoc(userRef, {
+                notifiedGigs: arrayUnion(gigId)
+            });
 
-    const userRef = doc(db, "users", userId);
-    try {
-        await updateDoc(userRef, {
-            notifiedGigs: arrayUnion(gigId)
-        });
-        setIsNotified(true);
-        
-        if (gigData.dateAndTime) {
-            const notificationDate = new Date(gigData.dateAndTime.seconds * 1000);
-            notificationDate.setMinutes(notificationDate.getMinutes() - minutes);
+            if (gigData.dateAndTime) {
+                const notificationDate = new Date(gigData.dateAndTime.seconds * 1000);
+                notificationDate.setMinutes(notificationDate.getMinutes() - minutes);
 
-            const notificationId = await scheduleNotification(
-                {
-                    title: `Upcoming Gig: ${gigData.gigName}`,
-                    body: `Don't forget! ${gigData.gigName} is starting in ${minutes} minutes at ${gigData.venue}`,
-                    data: { gigId }
-                },
-                { date: notificationDate }
-            );
-            
-            if (notificationId) {
-                console.log("Notification scheduled with ID:", notificationId);
+                const notificationId = await scheduleNotification(
+                    {
+                        title: `Upcoming Gig: ${gigData.gigName}`,
+                        body: `Don't forget! ${gigData.gigName} is starting in ${minutes} minutes at ${gigData.venue}`,
+                        data: { gigId }
+                    },
+                    { date: notificationDate }
+                );
+
+                if (notificationId) {
+                    console.log("Notification scheduled with ID:", notificationId);
+                }
             }
-        }
-        
-        showPopup();
-    } catch (error) {
-        console.error("Error setting notification", error);
-        setError(error as FirestoreError);
-    }
-};
 
-    const cancelNotificationForGig = async () => {
-        if (!userId) return;
-        const userRef = doc(db, "users", userId);
+            showPopup();
+        } catch (error) {
+            console.error("Error setting notification", error);
+            setError(error as FirestoreError);
+        }
+    }, [userId, gigId, gigData, userRef, permissionStatus, showPopup]);
+
+    const cancelNotificationForGig = useCallback(async () => {
+        if (!userId || !userRef) return;
+        
         try {
             await updateDoc(userRef, {
                 notifiedGigs: arrayRemove(gigId)
             });
-            setIsNotified(false);
             await cancelNotification(gigId);
         } catch (error) {
             console.error("Error cancelling notification", error);
             setError(error as FirestoreError);
         }
-    };
+    }, [userId, gigId, userRef, cancelNotification]);
 
-    return {
+    // Memoize returned object to prevent unnecessary re-renders
+    return useMemo(() => ({
         isGigSaved,
         toggleSaveGig,
         likes,
@@ -190,5 +186,20 @@ const setNotification = async (minutes: number) => {
         isReminderPopupVisible,
         error,
         permissionStatus
-    };
+    }), [
+        isGigSaved,
+        toggleSaveGig,
+        likes,
+        toggleLiked,
+        isNotified,
+        showReminderPopup,
+        hideReminderPopup,
+        setNotification,
+        cancelNotificationForGig,
+        isGigLiked,
+        isPopupVisible,
+        isReminderPopupVisible,
+        error,
+        permissionStatus
+    ]);
 };
